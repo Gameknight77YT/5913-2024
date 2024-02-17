@@ -4,9 +4,15 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.LimelightHelpers;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -19,12 +25,18 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  private final boolean UseLimelight = false;
+
+  private PowerDistribution pdh = new PowerDistribution(Constants.pdhID, ModuleType.kRev);
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
+    pdh.clearStickyFaults();
+    pdh.setSwitchableChannel(true);
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -39,11 +51,28 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    //if (pdh.getSwitchableChannel() == false) {
+    //  pdh.setSwitchableChannel(true);
+    //}
+    
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    if (UseLimelight) {    
+      var lastResult = LimelightHelpers.getLatestResults("limelight").targetingResults;
+
+      Pose2d llPose = lastResult.getBotPose2d_wpiBlue();
+
+      if (lastResult.valid) {
+        m_robotContainer.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp());
+      }
+    }
+
+    SmartDashboard.putNumber("interpolated angle", m_robotContainer.pivot.interpolateAngle(m_robotContainer.camera.getDistance()));
+    
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

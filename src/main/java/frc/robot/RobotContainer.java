@@ -92,7 +92,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Shoot", shooter.runEnd(() -> shooter.shoot(false),
           () -> shooter.stopShooter()));
 
-    NamedCommands.registerCommand("Feed", shooter.runEnd(() -> shooter.feed(), () -> shooter.stopFeed()));
+    NamedCommands.registerCommand("Feed", shooter.runEnd(() -> shooter.feed(false), () -> shooter.stopFeed()));
 
     NamedCommands.registerCommand("FeedAndShoot", shooter.runEnd(() -> shooter.feedAndShoot(false), () -> shooter.stopFeedAndShoot()));
 
@@ -107,12 +107,12 @@ public class RobotContainer {
           );
 
     NamedCommands.registerCommand("IntakeBack", new ControlIntake(intake, false)
-          .alongWith(shooter.runEnd(() -> shooter.feed(), () -> shooter.stopFeed()))
+          .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed()))
           .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
           );
 
     NamedCommands.registerCommand("IntakeForward", new ControlIntake(intake, true)
-          .alongWith(shooter.runEnd(() -> shooter.feed(), () -> shooter.stopFeed()))
+          .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed()))
           .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
           );
 
@@ -173,20 +173,22 @@ public class RobotContainer {
           () -> pivot.stopPivot()))
     );
 
+    driverController.b().whileTrue(pivot.runEnd(() -> pivot.subloaferShot(), () ->  pivot.stopPivot()));
+
 
 
 
     driverController.rightBumper().negate()
       .and(driverController.rightTrigger())
         .whileTrue(new ControlIntake(intake, true)
-        .alongWith(shooter.runEnd(() -> shooter.feed(), () -> shooter.stopFeed()))
+        .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed()))
         .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
       );
     
     driverController.rightBumper()
       .and(driverController.rightTrigger().negate())
         .whileTrue(new ControlIntake(intake, false)
-          .alongWith(shooter.runEnd(() -> shooter.feed(), () -> shooter.stopFeed()))
+          .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed()))
           .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
         );
 
@@ -223,7 +225,7 @@ public class RobotContainer {
           () -> shooter.stopShooter()));
 
     manipulatorController.rightTrigger().and(manipulatorController.leftTrigger().negate()).whileTrue(
-        shooter.runEnd(() -> shooter.feed(), () -> shooter.stopFeed())
+        shooter.runEnd(() -> shooter.feed(false), () -> shooter.stopFeed())
       );
 
     manipulatorController.leftTrigger().and(manipulatorController.rightTrigger())

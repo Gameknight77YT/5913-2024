@@ -5,49 +5,35 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.Interpolating.InterpolatingDouble;
-import frc.robot.subsystems.Interpolating.InterpolatingTreeMap;
 
 public class Shooter extends SubsystemBase {
   private TalonFX shooterTop = new TalonFX(Constants.shooterTopID);
   private TalonFX shooterBottom = new TalonFX(Constants.shooterBottomID);
-  
-  
 
   private TalonFXConfiguration cfg1 = new TalonFXConfiguration();
   private TalonFXConfiguration cfg2 = new TalonFXConfiguration();
   
-  
   private final VelocityVoltage shooterTopVelocityVoltage = new VelocityVoltage(0);
   private final VelocityVoltage shooterBottomVelocityVoltage = new VelocityVoltage(0);
 
-  
-
   private TalonSRX feeder = new TalonSRX(Constants.feederID);
+
+  private DigitalInput beamBreak = new DigitalInput(0);
+
+  private Timer intakeTimer = new Timer();
 
   /*TODO: private DoubleSolenoid ampPistons = new DoubleSolenoid(PneumaticsModuleType.REVPH, 
       Constants.ampPistonForwardID, Constants.ampPistonBackwardID);*/
@@ -89,7 +75,7 @@ public class Shooter extends SubsystemBase {
 
     //TODO: ampPistons.set(Value.kReverse);
 
-    
+    intakeTimer.reset();
     
   }
 
@@ -104,6 +90,9 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("shooter bottom speed", 
       shooterBottom.getVelocity().getValue());
 
+    SmartDashboard.putBoolean("Beam Break", beamBreak.get());
+
+    SmartDashboard.putNumber("timer", intakeTimer.get());
     
   }
 
@@ -123,7 +112,7 @@ public class Shooter extends SubsystemBase {
 
   public void feedAndShoot(boolean isAmp) {
     shoot(isAmp);
-    feed();
+    feed(false);
   }
 
   public void stopFeedAndShoot() {
@@ -133,8 +122,29 @@ public class Shooter extends SubsystemBase {
 
   
 
-  public void feed() {
-    feeder.set(ControlMode.PercentOutput, Constants.feederSpeed);
+  public void feed(boolean intake) {
+    if (intake) {
+      if (!beamBreak.get()) {
+        intakeTimer.start();
+        feeder.setNeutralMode(NeutralMode.Brake);
+        feeder.set(ControlMode.PercentOutput, 0);
+
+      } else if (intakeTimer.get() > 0.0 && intakeTimer.get() < 3) {
+        feeder.set(ControlMode.PercentOutput, 0);
+        feeder.setNeutralMode(NeutralMode.Brake);
+
+      } else if (intakeTimer.get() > 3) {
+        intakeTimer.stop();
+        intakeTimer.reset();
+      
+      } else {
+        
+        feeder.set(ControlMode.PercentOutput, Constants.feederSpeed * .7);
+        feeder.setNeutralMode(NeutralMode.Coast);
+      }
+    } else {
+      feeder.set(ControlMode.PercentOutput, Constants.feederSpeed);
+    }
   }
 
   public void reverseFeed() {

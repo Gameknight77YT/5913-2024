@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import frc.robot.generated.TunerConstants;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -23,7 +24,7 @@ public final class Constants {
      *
      * Should be measured from center to center.
      */
-    public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(23); // Measure and set trackwidth
+    public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(22); // Measure and set trackwidth
     /**
      * The front-to-back distance between the drivetrain wheels.
      *
@@ -43,10 +44,10 @@ public final class Constants {
    * <p>
    * This is a measure of how fast the robot should be able to drive in a straight line.
    */
-  public static final double MAX_VELOCITY_METERS_PER_SECOND = 
-          (6380.0 / 60.0 *
+  public static final double MAX_VELOCITY_METERS_PER_SECOND = TunerConstants.kSpeedAt12VoltsMps;
+          /*(6380.0 / 60.0 *
           (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0) * //SdsModuleConfigurations.MK4_L1.getDriveReduction()
-          0.10033 * Math.PI); //SdsModuleConfigurations.MK4_L1.getWheelDiameter()
+          0.10033 * Math.PI); //SdsModuleConfigurations.MK4_L1.getWheelDiameter()*/
 
   public static final double MAX_acceleration_METERS_PER_SECOND = 
           MAX_VELOCITY_METERS_PER_SECOND/2;

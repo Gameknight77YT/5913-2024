@@ -83,7 +83,7 @@ public final class Constants {
     //Motor Ids 
     public static final int intakeTopID = 13;
     public static final int intakeBottomID = 14;
-    public static final int intakeTopBackID = 15;
+    public static final int shooterDeflectionID = 15;
     public static final int climberID = 16;
     public static final int shooterTopID = 17;
     public static final int shooterBottomID = 18;
@@ -95,26 +95,24 @@ public final class Constants {
     //other IDs 
     public static final int phID = 23;
     public static final int pdhID = 24;
+    public static final int pivotEncoderID = 25;
 
     //Solenoid ids
-    public static final int backIntakeArmsForwardID = 0;
-    public static final int backIntakeArmsBackwardID = 1;
-    public static final int ampPistonForwardID = 2;
-    public static final int ampPistonBackwardID = 3;
+    public static final int climberPistonBackwardID = 14;
+    public static final int climberPistonForwardID = 15;
+    public static final int ampPistonForwardID = 1;
+    public static final int ampPistonBackwardID = 0;
 
     //speeds
-    public static final double intakeSpeed = 0.95; 
+    public static final double intakeSpeed = 0.75; 
     public static final double feederSpeed = 0.95; 
     public static final double shooterTopShootSpeed = 75; //FIXME
     public static final double shooterBottomShootSpeed = 75; //FIXME
-    public static final double shooterTopAmpShootSpeed = 50; //FIXME
-    public static final double shooterBottomAmpShootSpeed = 50; //FIXME
+    public static final double shooterTopAmpShootSpeed = 10; //FIXME
+    public static final double shooterBottomAmpShootSpeed = 10; //FIXME
+    public static final double deflectionSpeed = .50;
 
-    //setpoints
-    public static final int climberTopSetpoint = 0; //FIXME
-    public static final double climberBottomSetpoint = 0;
-    public static final double elevatorTopSetpoint = 0; //FIXME
-    public static final double elevatorBottomSetpoint = 0;
+    
 
 
 }

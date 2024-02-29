@@ -4,8 +4,10 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.SysIdSwerveRotation;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.SysIdSwerveTranslation;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -17,14 +19,16 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.ControlIntake;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.AmpPiston;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.ClimberPiston;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Compressor;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Pivot;
@@ -42,11 +46,13 @@ public class RobotContainer {
   public final Camera camera = new Camera();
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
   public final Intake intake = new Intake();
-  //TODO: public final Climber climber = new Climber();
+  public final Climber climber = new Climber();
   public final Shooter shooter = new Shooter();
   public final Pivot pivot = new Pivot();
   private final Elevator elevator = new Elevator();
-  //public final Compressor compressor = new Compressor();
+  private final AmpPiston ampPiston = new AmpPiston();
+  private final ClimberPiston climberPiston = new ClimberPiston();
+  
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
@@ -56,7 +62,12 @@ public class RobotContainer {
       new CommandXboxController(Constants.manipulatorControllerPort);
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(Constants.MAX_VELOCITY_METERS_PER_SECOND * 0.1).withRotationalDeadband(Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.1) // Add a 10% deadband
+      .withDeadband(Constants.MAX_VELOCITY_METERS_PER_SECOND * 0.05).withRotationalDeadband(Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.05) // Add a 10% deadband
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
+                                                               // driving in open loop
+
+  private final SwerveRequest.FieldCentric driveTracking = new SwerveRequest.FieldCentric()
+      .withDeadband(Constants.MAX_VELOCITY_METERS_PER_SECOND * 0.1).withRotationalDeadband(Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.025) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
 
@@ -64,9 +75,11 @@ public class RobotContainer {
   private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
+  
+  
   //private final Telemetry logger = new Telemetry(Constants.MAX_VELOCITY_METERS_PER_SECOND);
 
-  //private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, IO devices, and commands. */
   public RobotContainer() {
@@ -94,35 +107,51 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Feed", shooter.runEnd(() -> shooter.feed(false), () -> shooter.stopFeed()));
 
-    NamedCommands.registerCommand("FeedAndShoot", shooter.runEnd(() -> shooter.feedAndShoot(false), () -> shooter.stopFeedAndShoot()));
+    NamedCommands.registerCommand("FeedAndShoot", shooter.runEnd(() -> shooter.feedAndShoot(false, false), () -> shooter.stopFeedAndShoot()));
 
-    NamedCommands.registerCommand("IntakeAndShoot", new ControlIntake(intake, true)
-          .alongWith(shooter.runEnd(() -> shooter.feedAndShoot(false), () -> shooter.stopFeedAndShoot()))
-          //.alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
+    NamedCommands.registerCommand("IntakeAndSpinShoot", intake.runEnd(() -> intake.controlIntake(true), () -> intake.intakeStop())
+          .alongWith(shooter.runEnd(() -> shooter.feedAndShoot(false, true), () -> shooter.stopFeedAndShoot()))
           );
 
-    NamedCommands.registerCommand("IntakeBackAndShoot", new ControlIntake(intake, false)
-          .alongWith(shooter.runEnd(() -> shooter.feedAndShoot(false), () -> shooter.stopFeedAndShoot()))
-          //.alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
-          );
-
-    NamedCommands.registerCommand("IntakeBack", new ControlIntake(intake, false)
-          .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed()))
+    NamedCommands.registerCommand("IntakePivotAndSpinShoot", intake.runEnd(() -> intake.controlIntake(true), () -> intake.intakeStop())
+          .alongWith(shooter.runEnd(() -> shooter.feedAndShoot(false, true), () -> shooter.stopFeedAndShoot()))
           .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
           );
 
-    NamedCommands.registerCommand("IntakeForward", new ControlIntake(intake, true)
-          .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed()))
+    NamedCommands.registerCommand("IntakeBackAndSpinShoot", intake.runEnd(() -> intake.controlIntake(false), () -> intake.intakeStop())
+          .alongWith(shooter.runEnd(() -> shooter.feedAndShoot(false,true), () -> shooter.stopFeedAndShoot()))
+          );
+
+    NamedCommands.registerCommand("IntakeBackAndShoot", intake.runEnd(() -> intake.controlIntake(false), () -> intake.intakeStop())
+          .alongWith(shooter.runEnd(() -> shooter.feedAndShoot(false,false), () -> shooter.stopFeedAndShoot()))
+          );
+
+    NamedCommands.registerCommand("IntakeBackPivotAndSpinShoot", intake.runEnd(() -> intake.controlIntake(false), () -> intake.intakeStop())
+          .alongWith(shooter.runEnd(() -> shooter.feedAndShoot(false,true), () -> shooter.stopFeedAndShoot()))
           .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
+          );
+
+    
+
+    NamedCommands.registerCommand("IntakeBack", (intake.runEnd(() -> intake.controlIntake(false), () -> intake.intakeStop())
+          .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed()))
+          .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot())))
+          .until(() -> shooter.getBeamBreak())
+          );
+
+    NamedCommands.registerCommand("IntakeForward", (intake.runEnd(() -> intake.controlIntake(true), () -> intake.intakeStop())
+          .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed()))
+          .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot())))
+          .until(() -> shooter.getBeamBreak())
           );
 
     NamedCommands.registerCommand("SubloaferShot", pivot.runEnd(() -> pivot.subloaferShot(), () -> pivot.stopPivot()));
 
     //autoChooser = AutoBuilder.buildAutoChooser("2 piece");
     // Another option that allows you to specify the default auto by its name
-    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
+     autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
 
-    //SmartDashboard.putData("Auto Chooser", autoChooser);
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
 
     // Configure the trigger bindings
@@ -146,9 +175,7 @@ public class RobotContainer {
             .withRotationalRate(-MathUtil.applyDeadband(driverController.getRightX(), .1) * Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) // Drive counterclockwise with negative X (right)
         ).ignoringDisable(true));
 
-    //driverController.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    //driverController.b().whileTrue(drivetrain
-    //    .applyRequest(() -> point.withModuleDirection(new Rotation2d(-driverController.getLeftY(), -driverController.getLeftX()))));
+    
 
     // reset the field-centric heading on left bumper press FIXME set button number
     driverController.button(7).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
@@ -157,14 +184,10 @@ public class RobotContainer {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
     }
     //drivetrain.registerTelemetry(logger::telemeterize);
-    
-
-    //driverController.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
-    //driverController.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
 
     driverController.leftTrigger().whileTrue(
         drivetrain.applyRequest(
-          () -> forwardStraight.withVelocityX(-MathUtil.applyDeadband(driverController.getLeftY(), 0.1) * Constants.MAX_VELOCITY_METERS_PER_SECOND) // Drive forward with negative Y (forward)
+          () -> driveTracking.withVelocityX(-MathUtil.applyDeadband(driverController.getLeftY(), 0.1) * Constants.MAX_VELOCITY_METERS_PER_SECOND) // Drive forward with negative Y (forward)
             .withVelocityY(-MathUtil.applyDeadband(driverController.getLeftX(), .1) * Constants.MAX_VELOCITY_METERS_PER_SECOND) // Drive left with negative X (left)
             .withRotationalRate(camera.moveInput()))
           .ignoringDisable(true)
@@ -180,37 +203,48 @@ public class RobotContainer {
 
     driverController.rightBumper().negate()
       .and(driverController.rightTrigger())
-        .whileTrue(new ControlIntake(intake, true)
+        .whileTrue(intake.runEnd(() -> intake.controlIntake(true), () -> intake.intakeStop())
         .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed()))
         .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
       );
     
     driverController.rightBumper()
       .and(driverController.rightTrigger().negate())
-        .whileTrue(new ControlIntake(intake, false)
+        .whileTrue(intake.runEnd(() -> intake.controlIntake(false), () -> intake.intakeStop())
           .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed()))
           .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
         );
 
-    /*driverController.pov(0).whileTrue(climber.runEnd(
-      () -> climber.setClimberSetpoint(Constants.climberBottomSetpoint), 
-      () -> climber.stopClimber()));
+    driverController.x().whileTrue(climber.runEnd(
+      () -> climber.setClimberSpeed(.75),
+      () -> climber.setClimberSpeed(0))
+      );
     
-    driverController.pov(180).whileTrue(climber.runEnd(
-      () -> climber.setClimberSetpoint(Constants.climberTopSetpoint), 
-      () -> climber.stopClimber()));
-      
-      hold button
-      */
+    driverController.y().whileTrue(climber.runEnd(
+      () -> climber.setClimberSpeed(-.75),
+      () -> climber.setClimberSpeed(0))
+      );
 
-    /*driverController.pov(0).onTrue(climber.run(
-      () -> climber.setClimberSetpoint(Constants.climberBottomSetpoint))
-      .onlyWhile(climber.isNotAtSetpoint()));
+    driverController.a().onTrue(climberPiston.runOnce(() -> climberPiston.toggle()));
+
+    driverController.povDown().whileTrue(climber.runEnd(
+      () -> climber.climberDown(), 
+      () -> climber.stopClimber())
+    );
+
+    driverController.povUp().whileTrue(climber.runEnd(
+      () -> climber.climberTop(), 
+      () -> climber.stopClimber())
+    );
+
+    driverController.leftBumper()
+    .and(driverController.rightBumper().negate())
+    .and(driverController.rightTrigger().negate())
+    .and(driverController.leftTrigger().negate())
+    .whileTrue(
+      pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot())
+      );
     
-    driverController.pov(180).onTrue(climber.run(
-      () -> climber.setClimberSetpoint(Constants.climberTopSetpoint))
-      .onlyWhile(climber.isNotAtSetpoint()));
-    */
 
     manipulatorController.rightBumper()
       .and(manipulatorController.rightTrigger().negate())
@@ -219,34 +253,81 @@ public class RobotContainer {
           () -> shooter.stopFeed())
         );
 
-    manipulatorController.leftTrigger().and(manipulatorController.rightTrigger().negate()).whileTrue(
-        shooter.runEnd(() -> shooter.shoot(
-          manipulatorController.leftBumper().getAsBoolean()),
-          () -> shooter.stopShooter()));
+    manipulatorController.leftTrigger()
+    .and(manipulatorController.rightTrigger().negate())
+    .and(ampPiston.getPistonPose()).whileTrue(
+      shooter.runEnd(() -> shooter.shoot(
+          true),
+          () -> shooter.stopShooter())
+    );
+
+    manipulatorController.leftTrigger()
+    .and(manipulatorController.rightTrigger().negate())
+    .and(ampPiston.getPistonPose().negate()).whileTrue(
+      shooter.runEnd(() -> shooter.shoot(
+          false),
+          () -> shooter.stopShooter())
+    );
+
+    manipulatorController.leftTrigger()
+    .and(manipulatorController.rightTrigger())
+    .and(ampPiston.getPistonPose())
+      .whileTrue(shooter.runEnd(() -> shooter.feedAndShoot(
+          true, false),
+          () -> shooter.stopFeedAndShoot())
+      );
+
+    manipulatorController.leftTrigger()
+    .and(manipulatorController.rightTrigger())
+    .and(ampPiston.getPistonPose().negate())
+      .whileTrue(shooter.runEnd(() -> shooter.feedAndShoot(
+          false, false),
+          () -> shooter.stopFeedAndShoot())
+      );
+
+    manipulatorController.leftBumper().onTrue(ampPiston.runOnce(() -> ampPiston.toggle()));
+
+    
 
     manipulatorController.rightTrigger().and(manipulatorController.leftTrigger().negate()).whileTrue(
         shooter.runEnd(() -> shooter.feed(false), () -> shooter.stopFeed())
       );
 
-    manipulatorController.leftTrigger().and(manipulatorController.rightTrigger())
-      .whileTrue(shooter.runEnd(() -> shooter.feedAndShoot(
-          manipulatorController.leftBumper().getAsBoolean()),
-          () -> shooter.stopFeedAndShoot()));
+    manipulatorController.b().whileTrue(
+      pivot.runEnd(() -> pivot.topPivot(), () -> pivot.stopPivot())
+      .alongWith(elevator.runEnd(() -> elevator.setElevator(-2500), () -> elevator.stopElevator()))
+      .alongWith(new WaitCommand(1.0)
+        .andThen(ampPiston.runOnce(() -> ampPiston.set(true)))
+        )
+    );
 
-    /*manipulatorController.a().whileTrue(shooter.runEnd(
-      () -> shooter.setElevator(Constants.elevatorBottomSetpoint), 
-      () -> shooter.stopElevator()));
+    manipulatorController.povUp().whileTrue(
+      elevator.runEnd(() -> elevator.holdElevatorAtTop(), () -> elevator.stopElevator())
+      .alongWith(pivot.runEnd(() -> pivot.trapPivot(), () -> pivot.stopPivot()))
+      .alongWith(new WaitCommand(.5)
+        .andThen(ampPiston.runOnce(() -> ampPiston.set(true)))
+        )
+      );
+
+    manipulatorController.povLeft().whileTrue(
+      elevator.runEnd(() -> elevator.holdElevatorAtAmp(), () -> elevator.stopElevator())
+      .alongWith(pivot.runEnd(() -> pivot.ampPivot(), () -> pivot.stopPivot()))
+      .alongWith(new WaitCommand(.5)
+        .andThen(ampPiston.runOnce(() -> ampPiston.set(true)))
+        )
+    );
+
+    manipulatorController.povDown().whileTrue(
+      elevator.runEnd(() -> elevator.setElevator(0), () -> elevator.stopElevator())
+      .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
+      .alongWith(ampPiston.runOnce(() -> ampPiston.set(false)))
+    );
+
     
-    manipulatorController.y().whileTrue(shooter.runEnd(
-      () -> shooter.setElevator(Constants.elevatorTopSetpoint), 
-      () -> shooter.stopElevator()));*/
 
-    /*manipulatorController.b().whileTrue(elevator.run(
-        () -> elevator.setElevatorJoystick(manipulatorController.getRightY()))
-      ).whileFalse(elevator.runEnd(
-        () -> elevator.holdElevatorAtbottom(), 
-        () -> elevator.stopElevator())
-      );*/
+    
+
+    
 
     
 
@@ -269,7 +350,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return AutoBuilder.buildAuto("2 piece");
+    return autoChooser.getSelected();
   }
 
   

@@ -16,64 +16,76 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Elevator extends SubsystemBase {
-  private TalonSRX elevatorRight = new TalonSRX(Constants.elevatorRightID);
-  private TalonSRX elevatorLeft = new TalonSRX(Constants.elevatorLeftID);
+  private TalonSRX elevatorFollowerRight = new TalonSRX(Constants.elevatorRightID);
+  private TalonSRX elevatorMasterLeft = new TalonSRX(Constants.elevatorLeftID);
   /** Creates a new Elevator. */
   public Elevator() {
-    elevatorLeft.configFactoryDefault();
-    elevatorRight.configFactoryDefault();
+    elevatorFollowerRight.configFactoryDefault();
+    elevatorMasterLeft.configFactoryDefault();
     
-    elevatorLeft.clearStickyFaults();
-    elevatorRight.clearStickyFaults();
+    elevatorFollowerRight.clearStickyFaults();
+    elevatorMasterLeft.clearStickyFaults();
 
-    elevatorLeft.follow(elevatorRight);
-    elevatorRight.setInverted(true);
-    elevatorLeft.setInverted(InvertType.FollowMaster);
-    elevatorRight.setNeutralMode(NeutralMode.Brake);
-    elevatorLeft.setNeutralMode(NeutralMode.Brake);
+    elevatorFollowerRight.follow(elevatorMasterLeft);
+    elevatorMasterLeft.setInverted(true);
+    elevatorFollowerRight.setInverted(InvertType.FollowMaster);
+    elevatorMasterLeft.setNeutralMode(NeutralMode.Brake);
+    elevatorFollowerRight.setNeutralMode(NeutralMode.Brake);
 
-    elevatorRight.config_kF(0, 0.0, 50); //FIXME
-    elevatorRight.config_kP(0, 0.1, 50);
-    elevatorRight.config_kI(0, 0.0, 50);
-    elevatorRight.config_kD(0, 0.0, 50);
-    elevatorRight.configVoltageCompSaturation(12);
-    elevatorRight.enableCurrentLimit(true);
-    elevatorRight.selectProfileSlot(0, 0);
+    elevatorMasterLeft.config_kF(0, 0.0, 50); //FIXME
+    elevatorMasterLeft.config_kP(0, 0.2, 50);
+    elevatorMasterLeft.config_kI(0, 0.0, 50);
+    elevatorMasterLeft.config_kD(0, 0.0, 50);
+    elevatorMasterLeft.configVoltageCompSaturation(12);
+    elevatorMasterLeft.enableCurrentLimit(false);
+    elevatorMasterLeft.selectProfileSlot(0, 0);
 
-    elevatorLeft.config_kF(0, 0.0, 50);  //FIXME
-    elevatorLeft.config_kP(0, 0.1, 50);
-    elevatorLeft.config_kI(0, 0.0, 50);
-    elevatorLeft.config_kD(0, 0.0, 50);
-    elevatorLeft.configVoltageCompSaturation(12);
-    elevatorLeft.enableCurrentLimit(true);
-    elevatorLeft.selectProfileSlot(0, 0);
+    elevatorFollowerRight.config_kF(0, 0.0, 50);  //FIXME
+    elevatorFollowerRight.config_kP(0, 0.2, 50);
+    elevatorFollowerRight.config_kI(0, 0.0, 50);
+    elevatorFollowerRight.config_kD(0, 0.0, 50);
+    elevatorFollowerRight.configVoltageCompSaturation(12);
+    elevatorFollowerRight.enableCurrentLimit(false);
+    elevatorFollowerRight.selectProfileSlot(0, 0);
 
-    elevatorRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-    elevatorLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+    elevatorMasterLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+    elevatorFollowerRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
+    elevatorMasterLeft.setSensorPhase(true);
+
+    elevatorMasterLeft.setSelectedSensorPosition(0);
+    elevatorFollowerRight.setSelectedSensorPosition(0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("elevator encoder", 
-      elevatorRight.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Right elevator encoder", 
+      elevatorMasterLeft.getSelectedSensorPosition());
+
+    SmartDashboard.putNumber("Left elevator encoder", 
+      elevatorFollowerRight.getSelectedSensorPosition());
   }
-  public void holdElevatorAtbottom() {
-    elevatorRight.set(ControlMode.Position, 0);
+  public void holdElevatorAtTop() {
+    setElevator(-8900);
+  }
+
+
+  public void holdElevatorAtAmp() {
+    setElevator(-4700);
   }
 
   
 
   public void setElevator(double setpoint) {
-    elevatorRight.set(ControlMode.Position, setpoint);
+    elevatorMasterLeft.set(ControlMode.Position, setpoint);
   }
 
   public void setElevatorJoystick(double speedElevator) {
-    elevatorRight.set(ControlMode.PercentOutput, MathUtil.applyDeadband(speedElevator, .1));
+    elevatorMasterLeft.set(ControlMode.PercentOutput, MathUtil.applyDeadband(speedElevator, .1));
   }
 
   public void stopElevator() {
-    elevatorRight.set(ControlMode.PercentOutput, 0);
+    elevatorMasterLeft.set(ControlMode.PercentOutput, 0);
   }
 }

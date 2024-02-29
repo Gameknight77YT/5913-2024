@@ -42,6 +42,8 @@ public class Climber extends SubsystemBase {
 
     climber.getConfigurator().apply(cfg);
 
+    climber.setPosition(0);
+
   }
 
   @Override
@@ -63,7 +65,19 @@ public class Climber extends SubsystemBase {
     climber.setControl(climberPositionVoltage.withPosition(setpoint));
   }
 
+  public void setClimberSpeed(double speedPercent) {
+    climber.set(speedPercent);
+  }
+
   public void stopClimber() {
-    climber.set(0);
+    climber.setControl(climberPositionVoltage.withPosition(climber.getPosition().getValueAsDouble()));
+  }
+
+  public void climberTop() {
+    climber.setControl(climberPositionVoltage.withPosition(0));
+  }
+
+  public void climberDown() {
+    climber.setControl(climberPositionVoltage.withPosition(-170));
   }
 }

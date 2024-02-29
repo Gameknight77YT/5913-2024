@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.LimelightHelpers;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -54,6 +53,8 @@ public class Robot extends TimedRobot {
     //if (pdh.getSwitchableChannel() == false) {
     //  pdh.setSwitchableChannel(true);
     //}
+
+    //SmartDashboard.putNumber("current", pdh.getTotalCurrent());
     
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
@@ -61,16 +62,9 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    if (UseLimelight) {    
-      var lastResult = LimelightHelpers.getLatestResults("limelight").targetingResults;
+    SmartDashboard.putNumber("move input", m_robotContainer.camera.moveInput());
 
-      Pose2d llPose = lastResult.getBotPose2d_wpiBlue();
-
-      if (lastResult.valid) {
-        m_robotContainer.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp());
-      }
-    }
-
+    SmartDashboard.putNumber("distance", m_robotContainer.camera.getDistance());
     SmartDashboard.putNumber("interpolated angle", m_robotContainer.pivot.interpolateAngle(m_robotContainer.camera.getDistance()));
     
   }

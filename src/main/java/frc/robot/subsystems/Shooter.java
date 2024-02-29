@@ -12,9 +12,17 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.CANSparkLowLevel;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -22,6 +30,7 @@ import frc.robot.Constants;
 public class Shooter extends SubsystemBase {
   private TalonFX shooterTop = new TalonFX(Constants.shooterTopID);
   private TalonFX shooterBottom = new TalonFX(Constants.shooterBottomID);
+  private CANSparkMax shooterDeflection = new CANSparkMax(Constants.shooterDeflectionID, CANSparkLowLevel.MotorType.kBrushless);
 
   private TalonFXConfiguration cfg1 = new TalonFXConfiguration();
   private TalonFXConfiguration cfg2 = new TalonFXConfiguration();
@@ -34,36 +43,33 @@ public class Shooter extends SubsystemBase {
   private DigitalInput beamBreak = new DigitalInput(0);
 
   private Timer intakeTimer = new Timer();
-
-  /*TODO: private DoubleSolenoid ampPistons = new DoubleSolenoid(PneumaticsModuleType.REVPH, 
-      Constants.ampPistonForwardID, Constants.ampPistonBackwardID);*/
-
-  
   
   /** Creates a new Shooter. */
   public Shooter() {
     cfg1.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     cfg1.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     cfg1.Slot0.kV = 0.0;   //FIXME
-    cfg1.Slot0.kP = 0.65;
+    cfg1.Slot0.kP = 0.7;
     cfg1.Slot0.kI = 0.0;
     cfg1.Slot0.kD = 0.01;
 
     cfg2.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     cfg2.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     cfg2.Slot0.kV = 0.0;   //FIXME
-    cfg2.Slot0.kP = 0.65;
+    cfg2.Slot0.kP = 0.7;
     cfg2.Slot0.kI = 0.0;
     cfg2.Slot0.kD = 0.01;
 
     
 
     feeder.configFactoryDefault();
+    shooterDeflection.restoreFactoryDefaults();
     
 
     shooterTop.clearStickyFaults();
     shooterBottom.clearStickyFaults();
     feeder.clearStickyFaults();
+    shooterDeflection.clearFaults();
 
     shooterTop.getConfigurator().apply(cfg1);
     shooterBottom.getConfigurator().apply(cfg2);
@@ -72,8 +78,9 @@ public class Shooter extends SubsystemBase {
     shooterBottomVelocityVoltage.Slot = 0;
 
     feeder.setNeutralMode(NeutralMode.Coast);
+    shooterDeflection.setIdleMode(IdleMode.kCoast);
 
-    //TODO: ampPistons.set(Value.kReverse);
+    shooterDeflection.setInverted(false);
 
     intakeTimer.reset();
     
@@ -90,7 +97,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("shooter bottom speed", 
       shooterBottom.getVelocity().getValue());
 
-    SmartDashboard.putBoolean("Beam Break", beamBreak.get());
+    SmartDashboard.putBoolean("Beam Break", getBeamBreak());
 
     SmartDashboard.putNumber("timer", intakeTimer.get());
     
@@ -100,19 +107,19 @@ public class Shooter extends SubsystemBase {
 
   public void shoot(boolean isAmp) {
     if (isAmp) {
-      //ampPistons.set(Value.kForward);
+      shooterDeflection.set(Constants.deflectionSpeed);
       shooterTop.setControl(shooterTopVelocityVoltage.withVelocity(Constants.shooterTopAmpShootSpeed));
       shooterBottom.setControl(shooterBottomVelocityVoltage.withVelocity(Constants.shooterBottomAmpShootSpeed));
     } else {
-      //ampPistons.set(Value.kReverse);
+      shooterDeflection.set(0);
       shooterTop.setControl(shooterTopVelocityVoltage.withVelocity(Constants.shooterTopShootSpeed));
       shooterBottom.setControl(shooterBottomVelocityVoltage.withVelocity(Constants.shooterBottomShootSpeed));
     }
   }
 
-  public void feedAndShoot(boolean isAmp) {
+  public void feedAndShoot(boolean isAmp, boolean intake) {
     shoot(isAmp);
-    feed(false);
+    feed(intake);
   }
 
   public void stopFeedAndShoot() {
@@ -120,11 +127,15 @@ public class Shooter extends SubsystemBase {
     stopFeed();
   }
 
+  public boolean getBeamBreak() {
+    return !beamBreak.get();
+  }
+
   
 
   public void feed(boolean intake) {
     if (intake) {
-      if (!beamBreak.get()) {
+      if (getBeamBreak()) {
         intakeTimer.start();
         feeder.setNeutralMode(NeutralMode.Brake);
         feeder.set(ControlMode.PercentOutput, 0);
@@ -154,6 +165,7 @@ public class Shooter extends SubsystemBase {
   public void stopShooter() {
     shooterTop.set(0);
     shooterBottom.set(0);
+    shooterDeflection.set(0);
   }
 
   public void stopFeed() {

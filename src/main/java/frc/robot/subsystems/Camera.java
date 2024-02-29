@@ -20,7 +20,7 @@ public class Camera extends SubsystemBase {
 
   public static final String limeLightName = "limelight";
 
-  private PIDController pidController = new PIDController(0.175, 0, 0.01);
+  private PIDController pidController = new PIDController(0.1, 0., 0.0);
   
   /** Creates a new Camera. */
   public Camera() {

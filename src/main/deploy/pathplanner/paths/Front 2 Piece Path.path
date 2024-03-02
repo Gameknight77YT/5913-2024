@@ -3,54 +3,48 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.8799163752173672,
-        "y": 4.351321779566637
+        "x": 1.3633965729469937,
+        "y": 5.574822688106915
       },
       "prevControl": null,
       "nextControl": {
         "x": 1.4620660010550806,
-        "y": 4.055313495242375
-      },
-      "isLocked": false,
-      "linkedName": "BottomStart"
-    },
-    {
-      "anchor": {
-        "x": 2.7250346808385935,
-        "y": 4.114515152107228
-      },
-      "prevControl": {
-        "x": 1.830420081032679,
-        "y": 4.01620585542526
-      },
-      "nextControl": {
-        "x": 2.8244363030392505,
-        "y": 4.125438407294113
+        "y": 4.8249350344854545
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.103417283757646,
-        "y": 4.114515152107228
+        "x": 2.843437994568298,
+        "y": 4.055313495242375
       },
       "prevControl": {
-        "x": 2.5770305386764636,
-        "y": 4.114515152107228
+        "x": 2.182352826244115,
+        "y": 4.1046482092964185
+      },
+      "nextControl": {
+        "x": 2.943160693829276,
+        "y": 4.047871502760213
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.3633965729469937,
+        "y": 5.574822688106915
+      },
+      "prevControl": {
+        "x": 1.4817998866766982,
+        "y": 4.3217209511342105
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Bottom2PieceEnd"
+      "linkedName": "Front 2 Piece End"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.95,
-      "rotationDegrees": 180.0,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -61,13 +55,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 150.25511870305783,
+    "rotation": -179.49297093908527,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Bottom Start Folder",
+  "folder": "Front Notes",
   "previewStartingState": {
-    "rotation": 132.28885464351433,
+    "rotation": 180.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

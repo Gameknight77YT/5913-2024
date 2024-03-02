@@ -33,6 +33,8 @@ public class Pivot extends SubsystemBase {
   private TalonFXConfiguration cfg = new TalonFXConfiguration();
   private CANcoderConfiguration cfg2 = new CANcoderConfiguration();
 
+  
+
   //private final PositionVoltage pivotPositionVoltage = new PositionVoltage(0);
 
   private PIDController pivotController = new PIDController(0.65, 0.00, 0.0);
@@ -114,6 +116,14 @@ public class Pivot extends SubsystemBase {
     pivot.set(-pivotController.calculate(pivotEncoder.getAbsolutePosition().getValueAsDouble()*360, setpoint));
   }
 
+  public void setPivot(double setpoint, boolean hasValidTarget) {
+    if (hasValidTarget) {
+      setPivot(setpoint);
+    } else {
+      stopPivot();
+    }
+  }
+
   public void subloaferShot() {
     setPivot(110);
   }
@@ -129,7 +139,7 @@ public class Pivot extends SubsystemBase {
   
   public void setPivotForIntake() {
     //pivot.setControl(pivotPositionVoltage.withPosition(73));
-    pivot.set(-pivotController.calculate(pivotEncoder.getAbsolutePosition().getValueAsDouble()*360, 82.5));
+    pivot.set(-pivotController.calculate(pivotEncoder.getAbsolutePosition().getValueAsDouble()*360, 87.0));
   }
 
   public void stopPivot() {

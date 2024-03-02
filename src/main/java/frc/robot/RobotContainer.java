@@ -192,7 +192,7 @@ public class RobotContainer {
             .withRotationalRate(camera.moveInput()))
           .ignoringDisable(true)
         .alongWith(pivot.runEnd(
-          () -> pivot.setPivot(pivot.interpolateAngle(camera.getDistance())), 
+          () -> pivot.setPivot(pivot.interpolateAngle(camera.getDistance()), camera.hasValidTarget().getAsBoolean()), 
           () -> pivot.stopPivot()))
     );
 
@@ -201,19 +201,41 @@ public class RobotContainer {
 
 
 
-    driverController.rightBumper().negate()
+    /*driverController.rightBumper().negate()
       .and(driverController.rightTrigger())
-        .whileTrue(intake.runEnd(() -> intake.controlIntake(true), () -> intake.intakeStop())
+      .and(driverController.povLeft().negate())
+        .whileTrue(intake.runEnd(() -> intake.controlIntake(true, shooter.isfeedStopped()), () -> intake.intakeStop())
         .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed()))
         .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
-      );
+      );*/
     
     driverController.rightBumper()
       .and(driverController.rightTrigger().negate())
-        .whileTrue(intake.runEnd(() -> intake.controlIntake(false), () -> intake.intakeStop())
+      .and(driverController.povLeft().negate())
+        .whileTrue(intake.runEnd(() -> intake.controlIntake(false, shooter.isfeedStopped()), () -> intake.intakeStop())
           .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed()))
           .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
         );
+
+    /*driverController.rightBumper().negate()
+      .and(driverController.rightTrigger())
+      .and(driverController.povLeft())
+        .whileTrue(intake.runEnd(() -> intake.reverseIntake(false), () -> intake.intakeStop())
+        .alongWith(shooter.runEnd(() -> shooter.reverseFeed(), () -> shooter.stopFeed()))
+        .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
+      );*/
+    
+    driverController.rightBumper()
+      .and(driverController.rightTrigger().negate())
+      .and(driverController.povLeft())
+        .whileTrue(intake.runEnd(() -> intake.reverseIntake(false), () -> intake.intakeStop())
+          .alongWith(shooter.runEnd(() -> shooter.reverseFeed(), () -> shooter.stopFeed()))
+          .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
+        );
+
+      
+
+    
 
     driverController.x().whileTrue(climber.runEnd(
       () -> climber.setClimberSpeed(.75),

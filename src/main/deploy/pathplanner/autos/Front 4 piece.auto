@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7,
-      "y": 6.73
+      "x": 1.36,
+      "y": 5.55
     },
-    "rotation": -120.11755160588184
+    "rotation": 180.0
   },
   "command": {
     "type": "sequential",
@@ -43,101 +43,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "SubloaferShot"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "FeedAndShoot"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.0
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeBackPivotAndSpinShoot"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.0
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Top 2 Piece Path"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeBackPivotAndSpinShoot"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Track"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeBackAndSpinShoot"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.75
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Track"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeBackAndShoot"
                 }
               },
               {
@@ -154,15 +60,34 @@
           "data": {
             "commands": [
               {
+                "type": "named",
+                "data": {
+                  "name": "IntakeBackPivotAndSpinShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
                 "type": "path",
                 "data": {
-                  "pathName": "Top 2to3 Piece Path"
+                  "pathName": "Front 2 Piece Path"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeBackAndSpinShoot"
+                  "name": "IntakeBackPivotAndSpinShoot"
                 }
               }
             ]
@@ -175,7 +100,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Track"
+                  "name": "SubloaferShot"
                 }
               },
               {
@@ -200,13 +125,189 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Track"
+                  "name": "SubloaferShot"
                 }
               },
               {
                 "type": "named",
                 "data": {
+                  "name": "FeedAndShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeBackPivotAndSpinShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Front 2to3 Piece Path"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeBackPivotAndSpinShoot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "SubloaferShot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeBackAndSpinShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.75
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "SubloaferShot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "FeedAndShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeBackPivotAndSpinShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Front 3to4 Piece Path"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeBackPivotAndSpinShoot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeBackAndSpinShoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "SubloaferShot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.75
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
                   "name": "IntakeBackAndShoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "SubloaferShot"
                 }
               },
               {
@@ -221,6 +322,6 @@
       ]
     }
   },
-  "folder": "Top Start Folder",
+  "folder": "Front Notes",
   "choreoAuto": false
 }

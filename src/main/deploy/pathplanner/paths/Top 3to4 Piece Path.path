@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.642660362243803,
-        "y": 5.9892342861608805
+        "x": 3.4058537347843933,
+        "y": 6.82792442507962
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.678689357378716,
-        "y": 6.541783083566167
+        "x": 4.405853734784394,
+        "y": 6.82792442507962
       },
       "isLocked": false,
-      "linkedName": "Middle3PieceEnd"
+      "linkedName": "Top 3 Piece End"
     },
     {
       "anchor": {
-        "x": 8.615599538891386,
-        "y": 5.69322600183662
+        "x": 8.507063167972492,
+        "y": 5.722826830269045
       },
       "prevControl": {
-        "x": 6.060061350891933,
-        "y": 7.567945135890272
+        "x": 7.431566401594342,
+        "y": 6.433246712647272
       },
       "nextControl": {
-        "x": 8.696230140047888,
-        "y": 5.6340761399843595
+        "x": 8.590502986645411,
+        "y": 5.667710619769501
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.642660362243803,
-        "y": 5.9892342861608805
+        "x": 3.4058537347843933,
+        "y": 6.82792442507962
       },
       "prevControl": {
-        "x": 6.32646880678377,
-        "y": 7.834352591782107
+        "x": 6.425138234891857,
+        "y": 6.837791367890429
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,13 +46,13 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.8,
-      "rotationDegrees": 142.37975743754743,
+      "waypointRelativePos": 0.65,
+      "rotationDegrees": 164.8674262096628,
       "rotateFast": false
     },
     {
-      "waypointRelativePos": 1.35,
-      "rotationDegrees": 142.0,
+      "waypointRelativePos": 1.4,
+      "rotationDegrees": 164.8144400787141,
       "rotateFast": false
     }
   ],
@@ -66,13 +66,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -158.5870305251281,
+    "rotation": -144.14477165378432,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Middle Start Folder",
+  "folder": "Top Start Folder",
   "previewStartingState": {
-    "rotation": -160.3959118491706,
+    "rotation": -147.59211793699063,
     "velocity": 0
   },
   "useDefaultConstraints": true

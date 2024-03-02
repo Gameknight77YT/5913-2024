@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.642660362243803,
-        "y": 5.9892342861608805
+        "x": 1.3633965729469937,
+        "y": 5.574822688106915
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.678689357378716,
-        "y": 6.541783083566167
+        "x": 2.705300795216977,
+        "y": 5.46628631718802
       },
       "isLocked": false,
-      "linkedName": "Middle3PieceEnd"
+      "linkedName": "Front 3 Piece End"
     },
     {
       "anchor": {
-        "x": 8.615599538891386,
-        "y": 5.69322600183662
+        "x": 2.843437994568298,
+        "y": 6.9660616244309415
       },
       "prevControl": {
-        "x": 6.060061350891933,
-        "y": 7.567945135890272
+        "x": 2.843437994568298,
+        "y": 6.156972313944628
       },
       "nextControl": {
-        "x": 8.696230140047888,
-        "y": 5.6340761399843595
+        "x": 2.843437994568298,
+        "y": 7.076061624430939
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.642660362243803,
-        "y": 5.9892342861608805
+        "x": 1.3633965729469937,
+        "y": 5.574822688106915
       },
       "prevControl": {
-        "x": 6.32646880678377,
-        "y": 7.834352591782107
+        "x": 3.0901115648385167,
+        "y": 5.259080518161037
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,13 +46,13 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.8,
-      "rotationDegrees": 142.37975743754743,
+      "waypointRelativePos": 0.75,
+      "rotationDegrees": -90.0,
       "rotateFast": false
     },
     {
-      "waypointRelativePos": 1.35,
-      "rotationDegrees": 142.0,
+      "waypointRelativePos": 1.3,
+      "rotationDegrees": -90.0,
       "rotateFast": false
     }
   ],
@@ -66,13 +66,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -158.5870305251281,
+    "rotation": 177.70938995736148,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Middle Start Folder",
+  "folder": "Front Notes",
   "previewStartingState": {
-    "rotation": -160.3959118491706,
+    "rotation": 178.8542371618249,
     "velocity": 0
   },
   "useDefaultConstraints": true

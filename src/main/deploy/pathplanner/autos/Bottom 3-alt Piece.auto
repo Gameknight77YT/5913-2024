@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.17,
-      "y": 4.1
+      "x": 0.88,
+      "y": 4.35
     },
-    "rotation": 128.96431985817202
+    "rotation": 134.90557482392606
   },
   "command": {
     "type": "sequential",
@@ -24,13 +24,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Track"
+                  "name": "SubloaferShot"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.0
+                  "waitTime": 1.5
                 }
               }
             ]
@@ -49,32 +49,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Track"
+                  "name": "SubloaferShot"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.0
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeBackPivotAndSpinShoot"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.0
+                  "waitTime": 0.5
                 }
               }
             ]
@@ -87,7 +68,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Bottom 2 Piece Path"
+                  "pathName": "Bottom Skipto3 Piece Path"
                 }
               },
               {
@@ -143,7 +124,76 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.0
+                  "waitTime": 0.75
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Bottom 3to4 Piece Path"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeBackPivotAndSpinShoot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Track"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeBackAndSpinShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.75
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Track"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeBackAndSpinShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.75
                 }
               }
             ]

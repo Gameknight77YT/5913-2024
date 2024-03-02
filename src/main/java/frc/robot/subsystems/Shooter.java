@@ -42,6 +42,8 @@ public class Shooter extends SubsystemBase {
 
   private DigitalInput beamBreak = new DigitalInput(0);
 
+  private boolean intakeStopped = false;
+
   private Timer intakeTimer = new Timer();
   
   /** Creates a new Shooter. */
@@ -52,6 +54,7 @@ public class Shooter extends SubsystemBase {
     cfg1.Slot0.kP = 0.7;
     cfg1.Slot0.kI = 0.0;
     cfg1.Slot0.kD = 0.01;
+    //cfg1.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.2;
 
     cfg2.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     cfg2.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -59,6 +62,7 @@ public class Shooter extends SubsystemBase {
     cfg2.Slot0.kP = 0.7;
     cfg2.Slot0.kI = 0.0;
     cfg2.Slot0.kD = 0.01;
+    //cfg2.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.2;
 
     
 
@@ -76,6 +80,8 @@ public class Shooter extends SubsystemBase {
 
     shooterTopVelocityVoltage.Slot = 0;
     shooterBottomVelocityVoltage.Slot = 0;
+
+    
 
     feeder.setNeutralMode(NeutralMode.Coast);
     shooterDeflection.setIdleMode(IdleMode.kCoast);
@@ -131,11 +137,16 @@ public class Shooter extends SubsystemBase {
     return !beamBreak.get();
   }
 
+  public boolean isfeedStopped() {
+    return intakeStopped || getBeamBreak();
+  }
+
   
 
   public void feed(boolean intake) {
     if (intake) {
       if (getBeamBreak()) {
+        intakeStopped = true;
         intakeTimer.start();
         feeder.setNeutralMode(NeutralMode.Brake);
         feeder.set(ControlMode.PercentOutput, 0);
@@ -143,15 +154,17 @@ public class Shooter extends SubsystemBase {
       } else if (intakeTimer.get() > 0.0 && intakeTimer.get() < 3) {
         feeder.set(ControlMode.PercentOutput, 0);
         feeder.setNeutralMode(NeutralMode.Brake);
+        intakeStopped = true;
 
       } else if (intakeTimer.get() > 3) {
         intakeTimer.stop();
         intakeTimer.reset();
       
       } else {
-        
+        intakeStopped = false;
         feeder.set(ControlMode.PercentOutput, Constants.feederSpeed * .7);
         feeder.setNeutralMode(NeutralMode.Coast);
+
       }
     } else {
       feeder.set(ControlMode.PercentOutput, Constants.feederSpeed);
@@ -169,6 +182,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void stopFeed() {
+    intakeStopped = false;
     feeder.set(ControlMode.PercentOutput, 0);
   }
 

@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.642660362243803,
-        "y": 5.9892342861608805
+        "x": 2.3106230827846286,
+        "y": 3.1574216994587836
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.678689357378716,
-        "y": 6.541783083566167
+        "x": 3.090111564838516,
+        "y": 2.3581993317832803
       },
       "isLocked": false,
-      "linkedName": "Middle3PieceEnd"
+      "linkedName": "Bottom3PieceEnd"
     },
     {
       "anchor": {
-        "x": 8.615599538891386,
-        "y": 5.69322600183662
+        "x": 8.368925968621168,
+        "y": 1.1050975948105748
       },
       "prevControl": {
-        "x": 6.060061350891933,
-        "y": 7.567945135890272
+        "x": 6.0600613508919325,
+        "y": 1.381371993513219
       },
       "nextControl": {
-        "x": 8.696230140047888,
-        "y": 5.6340761399843595
+        "x": 8.468217662510101,
+        "y": 1.0932165374221554
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.642660362243803,
-        "y": 5.9892342861608805
+        "x": 2.3106230827846286,
+        "y": 3.1574216994587836
       },
       "prevControl": {
-        "x": 6.32646880678377,
-        "y": 7.834352591782107
+        "x": 4.42214884429769,
+        "y": 0.9373595670268267
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,13 +46,13 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.8,
-      "rotationDegrees": 142.37975743754743,
+      "waypointRelativePos": 0.7,
+      "rotationDegrees": 167.7401077220468,
       "rotateFast": false
     },
     {
       "waypointRelativePos": 1.35,
-      "rotationDegrees": 142.0,
+      "rotationDegrees": 170.14724989368315,
       "rotateFast": false
     }
   ],
@@ -66,13 +66,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -158.5870305251281,
+    "rotation": 142.22431569404546,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Middle Start Folder",
+  "folder": "Bottom Start Folder",
   "previewStartingState": {
-    "rotation": -160.3959118491706,
+    "rotation": 142.0899301441552,
     "velocity": 0
   },
   "useDefaultConstraints": true

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -28,12 +29,14 @@ public class Robot extends TimedRobot {
 
   private PowerDistribution pdh = new PowerDistribution(Constants.pdhID, ModuleType.kRev);
 
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
+    
     pdh.clearStickyFaults();
     pdh.setSwitchableChannel(true);
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
@@ -50,9 +53,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    //if (pdh.getSwitchableChannel() == false) {
-    //  pdh.setSwitchableChannel(true);
-    //}
+    if (m_robotContainer.shooter.isfeedStopped()) {
+      pdh.setSwitchableChannel(true);
+    } else {
+      pdh.setSwitchableChannel(false);
+    } 
 
     //SmartDashboard.putNumber("current", pdh.getTotalCurrent());
     

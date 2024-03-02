@@ -59,6 +59,24 @@ public class Intake extends SubsystemBase {
     }
   }
 
+  public void controlIntake(boolean isForward, Boolean beamBreak) {
+    if (!beamBreak) {
+      controlIntake(isForward);
+    } else {
+      intakeStop();
+    }
+  }
+
+  public void reverseIntake(boolean isForward) {
+    if (isForward) {
+      intakeTop.set(ControlMode.PercentOutput, -Constants.intakeSpeed);
+      intakeBottom.set(ControlMode.PercentOutput, Constants.intakeSpeed);
+    } else {
+      intakeTop.set(ControlMode.PercentOutput, -Constants.intakeSpeed);
+      intakeBottom.set(ControlMode.PercentOutput, -Constants.intakeSpeed);
+    }
+  }
+
 
   public void intakeFront() {
     intakeTop.set(ControlMode.PercentOutput, Constants.intakeSpeed);

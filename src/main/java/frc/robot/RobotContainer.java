@@ -313,6 +313,7 @@ public class RobotContainer {
 
     manipulatorController.rightTrigger().and(manipulatorController.leftTrigger().negate()).whileTrue(
         shooter.runEnd(() -> shooter.feed(false), () -> shooter.stopFeed())
+        .alongWith(intake.runEnd(() -> intake.controlIntake(false, shooter.isfeedStopped()), () -> intake.intakeStop()))
       );
 
     manipulatorController.b().whileTrue(

@@ -37,7 +37,7 @@ public class Pivot extends SubsystemBase {
 
   //private final PositionVoltage pivotPositionVoltage = new PositionVoltage(0);
 
-  private PIDController pivotController = new PIDController(0.65, 0.00, 0.0);
+  private PIDController pivotController = new PIDController(0.4, 0.00, 0.0);
 
   private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotMap = new InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble>();
   /** Creates a new Pivot. */

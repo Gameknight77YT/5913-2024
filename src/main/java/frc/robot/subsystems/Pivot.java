@@ -4,10 +4,8 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
@@ -33,11 +31,12 @@ public class Pivot extends SubsystemBase {
   private TalonFXConfiguration cfg = new TalonFXConfiguration();
   private CANcoderConfiguration cfg2 = new CANcoderConfiguration();
 
-  
+  private double pivotSetpoint;
+  private boolean joystickControl;
 
   //private final PositionVoltage pivotPositionVoltage = new PositionVoltage(0);
 
-  private PIDController pivotController = new PIDController(0.4, 0.00, 0.0);
+  private PIDController pivotController = new PIDController(0.3, 0.00, 0.0);
 
   private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotMap = new InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble>();
   /** Creates a new Pivot. */
@@ -60,7 +59,7 @@ public class Pivot extends SubsystemBase {
     cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = .2;
     cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
 
-
+    pivotSetpoint = getPivotAngleDegrees();
     
     pivot.clearStickyFaults();
     
@@ -68,24 +67,33 @@ public class Pivot extends SubsystemBase {
     
     //pivotPositionVoltage.Slot = 0;
 
-    put(4.15, 74.0);
-    put(3.98, 74.0);
-    put(3.86, 78.72);
-    put(3.74, 79.69);
-    put(3.57, 81.1);
-    put(3.43, 83.0);
-    put(3.31, 85.0);
-    put(3.01, 86.81);
-    put(2.71, 90.79);
+    //put(4.15, 74.0);
+    //put(3.98, 74.0);
+    //put(3.86, 78.72);
+    //put(3.74, 79.69);
+    //put(3.57, 81.1);
+    put(10.0, 83.0);
+    put(3.43, 84.5);
+    put(3.31, 86.0);
+    put(3.01, 89.);
+    put(2.71, 92.79);
     put(2.36, 96.76);
     put(1.93, 109.5);
 
-    pivotController.setTolerance(2);
+    pivotController.setTolerance(.5);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    
+    if (!joystickControl) {
+      double pid = -pivotController.calculate(pivotEncoder.getAbsolutePosition().getValueAsDouble()*360, pivotSetpoint);
+      pid = MathUtil.applyDeadband(pid, .05);
+      pivot.set(pid);
+    }
+    
     
     SmartDashboard.putNumber("pivot encoder", 
       pivot.getPosition().getValueAsDouble());
@@ -93,6 +101,7 @@ public class Pivot extends SubsystemBase {
     SmartDashboard.putNumber("pivot encoder abs", pivotEncoder.getAbsolutePosition().getValueAsDouble()*360);
 
     SmartDashboard.putNumber("pivot target", pivotController.getSetpoint());//pivotPositionVoltage.Position);
+    SmartDashboard.putNumber("error", pivotController.getPositionError());
   }
 
   /**
@@ -112,15 +121,14 @@ public class Pivot extends SubsystemBase {
   }
 
   public void setPivot(double setpoint) {
-    //pivot.setControl(pivotPositionVoltage.withPosition(setpoint));
-    pivot.set(-pivotController.calculate(pivotEncoder.getAbsolutePosition().getValueAsDouble()*360, setpoint));
+    pivotSetpoint = setpoint;
   }
 
   public void setPivot(double setpoint, boolean hasValidTarget) {
     if (hasValidTarget) {
       setPivot(setpoint);
     } else {
-      stopPivot();
+      
     }
   }
 
@@ -133,18 +141,25 @@ public class Pivot extends SubsystemBase {
   }
 
   public void setPivotJoystick(double speedPivot) {
-    pivot.set(MathUtil.applyDeadband(speedPivot, .1));
+    speedPivot = MathUtil.applyDeadband(speedPivot, .1);
+    if (Math.abs(speedPivot) > .1) {
+      pivot.set(speedPivot);
+      joystickControl = true;
+    } else if (joystickControl) {
+      pivotSetpoint = getPivotAngleDegrees();
+      joystickControl = false;
+    }
     
   }
   
-  public void setPivotForIntake() {
+  public void setPivotBelowStage() {
     //pivot.setControl(pivotPositionVoltage.withPosition(73));
-    pivot.set(-pivotController.calculate(pivotEncoder.getAbsolutePosition().getValueAsDouble()*360, 87.0));
+    setPivot(86.0);
   }
 
-  public void stopPivot() {
-    pivot.set(0);
-  }
+  //public void stopPivot() {
+  //  pivot.set(0);
+  //}
 
   public void topPivot() {
       setPivot(134);

@@ -30,7 +30,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.5
+                  "waitTime": 1.0
                 }
               }
             ]
@@ -74,7 +74,39 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeBackPivotAndSpinShoot"
+                  "name": "IntakeBack"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Pivot89"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Bottom 3toScore Piece Path"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Shoot"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -87,19 +119,19 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Track"
+                  "name": "Pivot89"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeBackAndSpinShoot"
+                  "name": "Shoot"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.0
+                  "waitTime": 0.0
                 }
               }
             ]
@@ -118,13 +150,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Track"
+                  "name": "Pivot89"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.75
+                  "waitTime": 0.3
                 }
               }
             ]
@@ -141,9 +173,67 @@
                 }
               },
               {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "race",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Shoot"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.5
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakeBack"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
                 "type": "named",
                 "data": {
-                  "name": "IntakeBackPivotAndSpinShoot"
+                  "name": "Pivot88"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Bottom 4toScore Piece Path"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Shoot"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -156,7 +246,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Track"
+                  "name": "Pivot88"
                 }
               },
               {
@@ -168,7 +258,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.75
+                  "waitTime": 0.0
                 }
               }
             ]
@@ -181,19 +271,19 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Track"
+                  "name": "Pivot88"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeBackAndSpinShoot"
+                  "name": "IntakeBackAndShoot"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.75
+                  "waitTime": 0.3
                 }
               }
             ]

@@ -104,8 +104,8 @@ public final class Constants {
     public static final int ampPistonBackwardID = 0;
 
     //speeds
-    public static final double intakeSpeed = 0.75; 
-    public static final double feederSpeed = 0.95; 
+    public static final double intakeSpeed = 1.00; 
+    public static final double feederSpeed = 1.00; 
     public static final double shooterTopShootSpeed = 75; //FIXME
     public static final double shooterBottomShootSpeed = 75; //FIXME
     public static final double shooterTopAmpShootSpeed = 10; //FIXME

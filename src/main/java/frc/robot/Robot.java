@@ -4,11 +4,10 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.AddressableLED;
+import com.ctre.phoenix6.SignalLogger;
+
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,8 +24,6 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
-  private final boolean UseLimelight = false;
-
   private PowerDistribution pdh = new PowerDistribution(Constants.pdhID, ModuleType.kRev);
 
 
@@ -36,6 +33,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    
+
+    new Thread(() -> {
+      try {
+          Thread.sleep(2000);
+          SignalLogger.stop();
+      } catch (Exception e) {
+      }
+  }).start();
     
     pdh.clearStickyFaults();
     pdh.setSwitchableChannel(true);

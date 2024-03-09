@@ -6,13 +6,12 @@ package frc.robot;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.SysIdSwerveRotation;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.SysIdSwerveTranslation;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -22,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AmpPiston;
 import frc.robot.subsystems.Camera;
@@ -53,6 +51,9 @@ public class RobotContainer {
   private final AmpPiston ampPiston = new AmpPiston();
   private final ClimberPiston climberPiston = new ClimberPiston();
   
+  private SlewRateLimiter xLimiter = new SlewRateLimiter(9.0);
+  private SlewRateLimiter yLimiter = new SlewRateLimiter(9.0);
+  private SlewRateLimiter rotLimiter = new SlewRateLimiter(20.0);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
@@ -71,9 +72,9 @@ public class RobotContainer {
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
 
-  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+  //private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+  //private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+  //private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
   
   
@@ -90,17 +91,35 @@ public class RobotContainer {
     //NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
     //NamedCommands.registerCommand("exampleCommand", exampleSubsystem.exampleCommand());
     //NamedCommands.registerCommand("someOtherCommand", new SomeOtherCommand());
-    NamedCommands.registerCommand("Track", (drivetrain.applyRequest(
-          () -> forwardStraight.withRotationalRate(camera.moveInput()))
-        .alongWith(pivot.runEnd(
-          () -> pivot.setPivot(pivot.interpolateAngle(camera.getDistance())), 
-          () -> pivot.stopPivot()))
+    NamedCommands.registerCommand("Track", drivetrain.applyRequest(
+          () -> driveTracking
+            .withRotationalRate(camera.moveInput()))
+          .ignoringDisable(true)
+        .alongWith(pivot.run(
+          () -> pivot.setPivot(pivot.interpolateAngle(camera.getDistance()), camera.hasValidTarget().getAsBoolean())))
+        );
+
+    NamedCommands.registerCommand("TrackOnlyPivot", (pivot.run(
+          () -> pivot.setPivot(pivot.interpolateAngle(camera.getDistance())))
         ));
 
-    NamedCommands.registerCommand("TrackOnlyPivot", (pivot.runEnd(
-          () -> pivot.setPivot(pivot.interpolateAngle(camera.getDistance())), 
-          () -> pivot.stopPivot())
+    NamedCommands.registerCommand("LowerPivot", (pivot.run(
+          () -> pivot.setPivotBelowStage())
         ));
+
+    NamedCommands.registerCommand("Pivot89", pivot.run(
+          () -> pivot.setPivot(89.15))
+          //.alongWith(drivetrain.applyRequest(
+          //  () -> driveTracking.withRotationalRate(camera.moveInput())
+          //))
+        );
+
+    NamedCommands.registerCommand("Pivot88", pivot.run(
+          () -> pivot.setPivot(86.5))
+          //.alongWith(drivetrain.applyRequest(
+          //  () -> driveTracking.withRotationalRate(camera.moveInput())
+          //))
+        );
     
     NamedCommands.registerCommand("Shoot", shooter.runEnd(() -> shooter.shoot(false),
           () -> shooter.stopShooter()));
@@ -115,7 +134,6 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("IntakePivotAndSpinShoot", intake.runEnd(() -> intake.controlIntake(true), () -> intake.intakeStop())
           .alongWith(shooter.runEnd(() -> shooter.feedAndShoot(false, true), () -> shooter.stopFeedAndShoot()))
-          .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
           );
 
     NamedCommands.registerCommand("IntakeBackAndSpinShoot", intake.runEnd(() -> intake.controlIntake(false), () -> intake.intakeStop())
@@ -128,24 +146,21 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("IntakeBackPivotAndSpinShoot", intake.runEnd(() -> intake.controlIntake(false), () -> intake.intakeStop())
           .alongWith(shooter.runEnd(() -> shooter.feedAndShoot(false,true), () -> shooter.stopFeedAndShoot()))
-          .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
           );
 
     
 
     NamedCommands.registerCommand("IntakeBack", (intake.runEnd(() -> intake.controlIntake(false), () -> intake.intakeStop())
-          .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed()))
-          .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot())))
+          .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed())))
           .until(() -> shooter.getBeamBreak())
           );
 
     NamedCommands.registerCommand("IntakeForward", (intake.runEnd(() -> intake.controlIntake(true), () -> intake.intakeStop())
-          .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed()))
-          .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot())))
+          .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed())))
           .until(() -> shooter.getBeamBreak())
           );
 
-    NamedCommands.registerCommand("SubloaferShot", pivot.runEnd(() -> pivot.subloaferShot(), () -> pivot.stopPivot()));
+    NamedCommands.registerCommand("SubloaferShot", pivot.run(() -> pivot.subloaferShot()));
 
     //autoChooser = AutoBuilder.buildAutoChooser("2 piece");
     // Another option that allows you to specify the default auto by its name
@@ -168,11 +183,26 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    //sysid  https://github.com/jasondaming/ctre_swerve/tree/master
+
+    /*driverController.x().and(driverController.pov(0)).whileTrue(drivetrain.runDriveQuasiTest(Direction.kForward));
+    driverController.x().and(driverController.pov(180)).whileTrue(drivetrain.runDriveQuasiTest(Direction.kReverse));
+
+    driverController.y().and(driverController.pov(0)).whileTrue(drivetrain.runDriveDynamTest(Direction.kForward));
+    driverController.y().and(driverController.pov(180)).whileTrue(drivetrain.runDriveDynamTest(Direction.kReverse));
+
+    driverController.a().and(driverController.pov(0)).whileTrue(drivetrain.runSteerQuasiTest(Direction.kForward));
+    driverController.a().and(driverController.pov(180)).whileTrue(drivetrain.runSteerQuasiTest(Direction.kReverse));
+
+    driverController.b().and(driverController.pov(0)).whileTrue(drivetrain.runSteerDynamTest(Direction.kForward));
+    driverController.b().and(driverController.pov(180)).whileTrue(drivetrain.runSteerDynamTest(Direction.kReverse));
+    */
+
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(
-          () -> drive.withVelocityX(-MathUtil.applyDeadband(driverController.getLeftY(), 0.1) * Constants.MAX_VELOCITY_METERS_PER_SECOND) // Drive forward with negative Y (forward)
-            .withVelocityY(-MathUtil.applyDeadband(driverController.getLeftX(), .1) * Constants.MAX_VELOCITY_METERS_PER_SECOND) // Drive left with negative X (left)
-            .withRotationalRate(-MathUtil.applyDeadband(driverController.getRightX(), .1) * Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) // Drive counterclockwise with negative X (right)
+          () -> drive.withVelocityX(xLimiter.calculate(-MathUtil.applyDeadband(driverController.getLeftY(), 0.1) * Constants.MAX_VELOCITY_METERS_PER_SECOND)) // Drive forward with negative Y (forward)
+            .withVelocityY(yLimiter.calculate(-MathUtil.applyDeadband(driverController.getLeftX(), .1) * Constants.MAX_VELOCITY_METERS_PER_SECOND)) // Drive left with negative X (left)
+            .withRotationalRate(rotLimiter.calculate(-MathUtil.applyDeadband(driverController.getRightX(), .1) * Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)) // Drive counterclockwise with negative X (right)
         ).ignoringDisable(true));
 
     
@@ -187,56 +217,37 @@ public class RobotContainer {
 
     driverController.leftTrigger().whileTrue(
         drivetrain.applyRequest(
-          () -> driveTracking.withVelocityX(-MathUtil.applyDeadband(driverController.getLeftY(), 0.1) * Constants.MAX_VELOCITY_METERS_PER_SECOND) // Drive forward with negative Y (forward)
-            .withVelocityY(-MathUtil.applyDeadband(driverController.getLeftX(), .1) * Constants.MAX_VELOCITY_METERS_PER_SECOND) // Drive left with negative X (left)
-            .withRotationalRate(camera.moveInput()))
+          () -> driveTracking.withVelocityX(xLimiter.calculate(-MathUtil.applyDeadband(driverController.getLeftY(), 0.1) * Constants.MAX_VELOCITY_METERS_PER_SECOND)) // Drive forward with negative Y (forward)
+            .withVelocityY(yLimiter.calculate(-MathUtil.applyDeadband(driverController.getLeftX(), .1) * Constants.MAX_VELOCITY_METERS_PER_SECOND)) // Drive left with negative X (left)
+            .withRotationalRate(camera.moveInput() + rotLimiter.calculate(-MathUtil.applyDeadband(driverController.getRightX(), .1) * Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)))
           .ignoringDisable(true)
-        .alongWith(pivot.runEnd(
-          () -> pivot.setPivot(pivot.interpolateAngle(camera.getDistance()), camera.hasValidTarget().getAsBoolean()), 
-          () -> pivot.stopPivot()))
+        .alongWith(pivot.run(
+          () -> pivot.setPivot(pivot.interpolateAngle(camera.getDistance()), camera.hasValidTarget().getAsBoolean())))
     );
 
-    driverController.b().whileTrue(pivot.runEnd(() -> pivot.subloaferShot(), () ->  pivot.stopPivot()));
 
-
-
-
-    /*driverController.rightBumper().negate()
-      .and(driverController.rightTrigger())
-      .and(driverController.povLeft().negate())
-        .whileTrue(intake.runEnd(() -> intake.controlIntake(true, shooter.isfeedStopped()), () -> intake.intakeStop())
-        .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed()))
-        .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
-      );*/
-    
     driverController.rightBumper()
       .and(driverController.rightTrigger().negate())
       .and(driverController.povLeft().negate())
         .whileTrue(intake.runEnd(() -> intake.controlIntake(false, shooter.isfeedStopped()), () -> intake.intakeStop())
           .alongWith(shooter.runEnd(() -> shooter.feed(true), () -> shooter.stopFeed()))
-          .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
         );
 
-    /*driverController.rightBumper().negate()
-      .and(driverController.rightTrigger())
-      .and(driverController.povLeft())
-        .whileTrue(intake.runEnd(() -> intake.reverseIntake(false), () -> intake.intakeStop())
-        .alongWith(shooter.runEnd(() -> shooter.reverseFeed(), () -> shooter.stopFeed()))
-        .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
-      );*/
     
-    driverController.rightBumper()
-      .and(driverController.rightTrigger().negate())
-      .and(driverController.povLeft())
+    
+    driverController.rightBumper().negate()
+      .and(driverController.rightTrigger())
         .whileTrue(intake.runEnd(() -> intake.reverseIntake(false), () -> intake.intakeStop())
           .alongWith(shooter.runEnd(() -> shooter.reverseFeed(), () -> shooter.stopFeed()))
-          .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
         );
 
       
 
     
 
+    
+    driverController.b().whileTrue(pivot.run(() -> pivot.subloaferShot()));
+    
     driverController.x().whileTrue(climber.runEnd(
       () -> climber.setClimberSpeed(.75),
       () -> climber.setClimberSpeed(0))
@@ -249,22 +260,12 @@ public class RobotContainer {
 
     driverController.a().onTrue(climberPiston.runOnce(() -> climberPiston.toggle()));
 
-    driverController.povDown().whileTrue(climber.runEnd(
-      () -> climber.climberDown(), 
-      () -> climber.stopClimber())
-    );
-
-    driverController.povUp().whileTrue(climber.runEnd(
-      () -> climber.climberTop(), 
-      () -> climber.stopClimber())
-    );
-
     driverController.leftBumper()
     .and(driverController.rightBumper().negate())
     .and(driverController.rightTrigger().negate())
     .and(driverController.leftTrigger().negate())
     .whileTrue(
-      pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot())
+      pivot.run(() -> pivot.setPivotBelowStage())
       );
     
 
@@ -316,33 +317,32 @@ public class RobotContainer {
         .alongWith(intake.runEnd(() -> intake.controlIntake(false, shooter.isfeedStopped()), () -> intake.intakeStop()))
       );
 
-    manipulatorController.b().whileTrue(
-      pivot.runEnd(() -> pivot.topPivot(), () -> pivot.stopPivot())
-      .alongWith(elevator.runEnd(() -> elevator.setElevator(-2500), () -> elevator.stopElevator()))
+    manipulatorController.b().onTrue(
+      pivot.run(() -> pivot.topPivot())
+      .alongWith(elevator.run(() -> elevator.setElevator(-2500)))
       .alongWith(new WaitCommand(1.0)
         .andThen(ampPiston.runOnce(() -> ampPiston.set(true)))
         )
     );
 
-    manipulatorController.povUp().whileTrue(
-      elevator.runEnd(() -> elevator.holdElevatorAtTop(), () -> elevator.stopElevator())
-      .alongWith(pivot.runEnd(() -> pivot.trapPivot(), () -> pivot.stopPivot()))
+    manipulatorController.povUp().onTrue(
+      elevator.run(() -> elevator.holdElevatorAtTop())
+      .alongWith(pivot.run(() -> pivot.trapPivot()))
       .alongWith(new WaitCommand(.5)
         .andThen(ampPiston.runOnce(() -> ampPiston.set(true)))
         )
       );
 
-    manipulatorController.povLeft().whileTrue(
-      elevator.runEnd(() -> elevator.holdElevatorAtAmp(), () -> elevator.stopElevator())
-      .alongWith(pivot.runEnd(() -> pivot.ampPivot(), () -> pivot.stopPivot()))
+    manipulatorController.povLeft().onTrue(
+      elevator.run(() -> elevator.holdElevatorAtAmp())
+      .alongWith(pivot.run(() -> pivot.ampPivot()))
       .alongWith(new WaitCommand(.5)
         .andThen(ampPiston.runOnce(() -> ampPiston.set(true)))
         )
     );
 
-    manipulatorController.povDown().whileTrue(
-      elevator.runEnd(() -> elevator.setElevator(0), () -> elevator.stopElevator())
-      .alongWith(pivot.runEnd(() -> pivot.setPivotForIntake(), () -> pivot.stopPivot()))
+    manipulatorController.povDown().onTrue(
+      elevator.run(() -> elevator.setElevator(0))
       .alongWith(ampPiston.runOnce(() -> ampPiston.set(false)))
     );
 

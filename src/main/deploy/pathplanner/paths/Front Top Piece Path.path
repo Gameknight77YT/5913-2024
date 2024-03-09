@@ -1,0 +1,84 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.5,
+        "y": 5.574822688106915
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.0499704899083406,
+        "y": 6.4729772859694545
+      },
+      "isLocked": false,
+      "linkedName": "Front 3 Piece End"
+    },
+    {
+      "anchor": {
+        "x": 2.1736926970339785,
+        "y": 6.917166750364036
+      },
+      "prevControl": {
+        "x": 1.8200496995624238,
+        "y": 6.790488661717509
+      },
+      "nextControl": {
+        "x": 2.3851839902455727,
+        "y": 6.992924825544308
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.896550997712412,
+        "y": 7.06
+      },
+      "prevControl": {
+        "x": 2.8466136264657713,
+        "y": 7.062501789954243
+      },
+      "nextControl": {
+        "x": 3.0064132144550237,
+        "y": 7.054496062100666
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.5,
+        "y": 5.52
+      },
+      "prevControl": {
+        "x": 2.062121171218264,
+        "y": 6.393590972079185
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.53,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -179.7522040885517,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Front Notes",
+  "previewStartingState": {
+    "rotation": -179.78283273375897,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

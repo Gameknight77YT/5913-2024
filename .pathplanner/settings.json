@@ -14,9 +14,9 @@
     "Front Notes",
     "Top Start Folder"
   ],
-  "defaultMaxVel": 4.53,
-  "defaultMaxAccel": 4.53,
-  "defaultMaxAngVel": 540.0,
-  "defaultMaxAngAccel": 720.0,
+  "defaultMaxVel": 4.0,
+  "defaultMaxAccel": 2.75,
+  "defaultMaxAngVel": 500.0,
+  "defaultMaxAngAccel": 600.0,
   "maxModuleSpeed": 5.0292
 }

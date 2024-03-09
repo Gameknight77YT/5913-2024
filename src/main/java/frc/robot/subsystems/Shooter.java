@@ -12,17 +12,12 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -106,6 +101,8 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putBoolean("Beam Break", getBeamBreak());
 
     SmartDashboard.putNumber("timer", intakeTimer.get());
+
+    SmartDashboard.putBoolean("shooter up to speed", shooterTop.getVelocity().getValueAsDouble() > 60);
     
   }
 
@@ -146,15 +143,19 @@ public class Shooter extends SubsystemBase {
   public void feed(boolean intake) {
     if (intake) {
       if (getBeamBreak()) {
-        intakeStopped = true;
+        
         intakeTimer.start();
         feeder.setNeutralMode(NeutralMode.Brake);
         feeder.set(ControlMode.PercentOutput, 0);
+      
 
-      } else if (intakeTimer.get() > 0.0 && intakeTimer.get() < 3) {
+      } else if (intakeTimer.get() > 0.01 && intakeTimer.get() < 3) {
+        if(intakeTimer.get() > .2) {
+          intakeStopped = true;
+        }
         feeder.set(ControlMode.PercentOutput, 0);
         feeder.setNeutralMode(NeutralMode.Brake);
-        intakeStopped = true;
+        
 
       } else if (intakeTimer.get() > 3) {
         intakeTimer.stop();

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.459651728463761,
-        "y": 0.7902324201594977
+        "x": 8.230799209690023,
+        "y": 0.7428836231718271
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.770240059564088,
-        "y": 1.1627096231291723
+        "x": 5.673964172355826,
+        "y": 1.413658247163823
       },
       "isLocked": false,
       "linkedName": "Bottom4Piece"
@@ -20,8 +20,8 @@
         "y": 3.128816721793552
       },
       "prevControl": {
-        "x": 4.307394026358197,
-        "y": 1.7714845414803362
+        "x": 4.482352781499456,
+        "y": 2.0765414049912074
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,8 +32,8 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.6,
-    "maxAcceleration": 2.75,
+    "maxVelocity": 4.95,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 500.0,
     "maxAngularAcceleration": 600.0
   },

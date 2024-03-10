@@ -108,7 +108,7 @@ public class RobotContainer {
         ));
 
     NamedCommands.registerCommand("Pivot89", pivot.run(
-          () -> pivot.setPivot(89.15))
+          () -> pivot.setPivot(86.5))
           //.alongWith(drivetrain.applyRequest(
           //  () -> driveTracking.withRotationalRate(camera.moveInput())
           //))

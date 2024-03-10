@@ -30,7 +30,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.0
+                  "waitTime": 0.9
                 }
               }
             ]
@@ -55,7 +55,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.5
+                  "waitTime": 0.4
                 }
               }
             ]
@@ -74,13 +74,26 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeBack"
+                  "name": "Pivot89"
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "Pivot89"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.75
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakeBackAndSpinShoot"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -196,9 +209,15 @@
                       }
                     },
                     {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
                       "type": "named",
                       "data": {
-                        "name": "IntakeBack"
+                        "name": "IntakeBackAndSpinShoot"
                       }
                     }
                   ]

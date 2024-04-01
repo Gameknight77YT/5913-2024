@@ -33,13 +33,9 @@ public class Shooter extends SubsystemBase {
   private final VelocityVoltage shooterTopVelocityVoltage = new VelocityVoltage(0);
   private final VelocityVoltage shooterBottomVelocityVoltage = new VelocityVoltage(0);
 
-  private TalonSRX feeder = new TalonSRX(Constants.feederID);
+  
 
-  private DigitalInput beamBreak = new DigitalInput(0);
-
-  private boolean intakeStopped = false;
-
-  private Timer intakeTimer = new Timer();
+  
   
   /** Creates a new Shooter. */
   public Shooter() {
@@ -61,13 +57,13 @@ public class Shooter extends SubsystemBase {
 
     
 
-    feeder.configFactoryDefault();
+    
     shooterDeflection.restoreFactoryDefaults();
     
 
     shooterTop.clearStickyFaults();
     shooterBottom.clearStickyFaults();
-    feeder.clearStickyFaults();
+    
     shooterDeflection.clearFaults();
 
     shooterTop.getConfigurator().apply(cfg1);
@@ -78,12 +74,12 @@ public class Shooter extends SubsystemBase {
 
     
 
-    feeder.setNeutralMode(NeutralMode.Coast);
+    
     shooterDeflection.setIdleMode(IdleMode.kCoast);
 
     shooterDeflection.setInverted(false);
 
-    intakeTimer.reset();
+    
     
   }
 
@@ -98,12 +94,14 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("shooter bottom speed", 
       shooterBottom.getVelocity().getValue());
 
-    SmartDashboard.putBoolean("Beam Break", getBeamBreak());
-
-    SmartDashboard.putNumber("timer", intakeTimer.get());
-
-    SmartDashboard.putBoolean("shooter up to speed", shooterTop.getVelocity().getValueAsDouble() > 60);
     
+
+    SmartDashboard.putBoolean("shooter up to speed", isShooterUpToSpeed());
+    
+  }
+
+  public boolean isShooterUpToSpeed() {
+    return shooterTop.getVelocity().getValueAsDouble() > 60;
   }
 
   
@@ -120,61 +118,15 @@ public class Shooter extends SubsystemBase {
     }
   }
 
-  public void feedAndShoot(boolean isAmp, boolean intake) {
-    shoot(isAmp);
-    feed(intake);
-  }
-
-  public void stopFeedAndShoot() {
-    stopShooter();
-    stopFeed();
-  }
-
-  public boolean getBeamBreak() {
-    return !beamBreak.get();
-  }
-
-  public boolean isfeedStopped() {
-    return intakeStopped || getBeamBreak();
-  }
+  
 
   
 
-  public void feed(boolean intake) {
-    if (intake) {
-      if (getBeamBreak()) {
-        
-        intakeTimer.start();
-        feeder.setNeutralMode(NeutralMode.Brake);
-        feeder.set(ControlMode.PercentOutput, 0);
-      
+  
 
-      } else if (intakeTimer.get() > 0.01 && intakeTimer.get() < 3) {
-        if(intakeTimer.get() > .2) {
-          intakeStopped = true;
-        }
-        feeder.set(ControlMode.PercentOutput, 0);
-        feeder.setNeutralMode(NeutralMode.Brake);
-        
+  
 
-      } else if (intakeTimer.get() > 3) {
-        intakeTimer.stop();
-        intakeTimer.reset();
-      
-      } else {
-        intakeStopped = false;
-        feeder.set(ControlMode.PercentOutput, Constants.feederSpeed * .7);
-        feeder.setNeutralMode(NeutralMode.Coast);
-
-      }
-    } else {
-      feeder.set(ControlMode.PercentOutput, Constants.feederSpeed);
-    }
-  }
-
-  public void reverseFeed() {
-    feeder.set(ControlMode.PercentOutput, -Constants.feederSpeed);
-  }
+  
 
   public void stopShooter() {
     shooterTop.set(0);
@@ -182,10 +134,7 @@ public class Shooter extends SubsystemBase {
     shooterDeflection.set(0);
   }
 
-  public void stopFeed() {
-    intakeStopped = false;
-    feeder.set(ControlMode.PercentOutput, 0);
-  }
+  
 
   
 

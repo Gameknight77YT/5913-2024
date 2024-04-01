@@ -3,64 +3,70 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5,
-        "y": 5.574822688106915
+        "x": 1.6088828051231172,
+        "y": 5.5109074798302276
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0499704899083406,
-        "y": 6.4729772859694545
+        "x": 2.183093599590955,
+        "y": 6.50683135221368
       },
       "isLocked": false,
       "linkedName": "Front 3 Piece End"
     },
     {
       "anchor": {
-        "x": 2.1736926970339785,
-        "y": 6.917166750364036
+        "x": 2.1323303990191604,
+        "y": 6.857555852487451
       },
       "prevControl": {
-        "x": 1.8200496995624238,
-        "y": 6.790488661717509
+        "x": 1.887972800600811,
+        "y": 6.598579408296333
       },
       "nextControl": {
-        "x": 2.3851839902455727,
-        "y": 6.992924825544308
+        "x": 2.2865035888113083,
+        "y": 7.020952549542952
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.896550997712412,
-        "y": 7.06
+        "x": 3.0887760981701002,
+        "y": 7.296321371239862
       },
       "prevControl": {
-        "x": 2.8466136264657713,
-        "y": 7.062501789954243
+        "x": 3.0760499526941647,
+        "y": 7.344674708470346
       },
       "nextControl": {
-        "x": 3.0064132144550237,
-        "y": 7.054496062100666
+        "x": 3.1575261375682637,
+        "y": 7.03510371928747
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.5,
-        "y": 5.52
+        "x": 1.6088828051231172,
+        "y": 5.5109074798302276
       },
       "prevControl": {
-        "x": 2.062121171218264,
-        "y": 6.393590972079185
+        "x": 2.1710039763413818,
+        "y": 6.384498451909413
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6000000000000001,
+      "rotationDegrees": -152.51966784454603,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -71,13 +77,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -179.7522040885517,
+    "rotation": -167.3173365170541,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "Front Notes",
   "previewStartingState": {
-    "rotation": -179.78283273375897,
+    "rotation": -167.25959860532214,
     "velocity": 0
   },
   "useDefaultConstraints": false

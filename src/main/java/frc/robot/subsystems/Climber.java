@@ -31,7 +31,7 @@ public class Climber extends SubsystemBase {
     cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    cfg.Slot0.kP = 0.1;  //FIXME
+    cfg.Slot0.kP = 0.2;  //FIXME
     cfg.Slot0.kI = 0.00;
     cfg.Slot0.kD = 0.00;  
     cfg.Slot0.GravityType = GravityTypeValue.Elevator_Static;

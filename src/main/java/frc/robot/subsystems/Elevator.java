@@ -9,6 +9,11 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -17,55 +22,28 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Elevator extends SubsystemBase {
-  private TalonSRX elevatorFollowerRight = new TalonSRX(Constants.elevatorRightID);
-  private TalonSRX elevatorMasterLeft = new TalonSRX(Constants.elevatorLeftID);
 
   private double setpoint = 0;
   private boolean joystickControl;
 
-  private PIDController elevatorController = new PIDController(.025, 0.0, 0.0);
+  private TalonFX elevator = new TalonFX(Constants.elevatorID);
+
+  private TalonFXConfiguration cfg = new TalonFXConfiguration();
+
+  private PIDController elevatorController = new PIDController(.08, 0.00, 0.001);
 
   /** Creates a new Elevator. */
   public Elevator() {
-    elevatorFollowerRight.configFactoryDefault();
-    elevatorMasterLeft.configFactoryDefault();
+
+    cfg.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     
-    elevatorFollowerRight.clearStickyFaults();
-    elevatorMasterLeft.clearStickyFaults();
+    
+    elevator.getConfigurator().apply(cfg);
 
-    //elevatorFollowerRight.follow(elevatorMasterLeft);
-    elevatorMasterLeft.follow(elevatorFollowerRight);
-    //elevatorMasterLeft.setInverted(true);
-    //elevatorFollowerRight.setInverted(InvertType.FollowMaster);
-    elevatorFollowerRight.setInverted(true);
-    elevatorMasterLeft.setInverted(InvertType.FollowMaster);
-    elevatorMasterLeft.setNeutralMode(NeutralMode.Brake);
-    elevatorFollowerRight.setNeutralMode(NeutralMode.Brake);
-
-    /*elevatorMasterLeft.config_kF(0, 0.0, 50); //FIXME
-    elevatorMasterLeft.config_kP(0, 0.0, 50);
-    elevatorMasterLeft.config_kI(0, 0.01, 50);
-    elevatorMasterLeft.config_kD(0, 0.0, 50);*/
-    elevatorMasterLeft.configVoltageCompSaturation(12);
-    elevatorMasterLeft.enableCurrentLimit(false);
-    /*elevatorMasterLeft.selectProfileSlot(0, 0);
-
-    elevatorFollowerRight.config_kF(0, 0.0, 50);  //FIXME
-    elevatorFollowerRight.config_kP(0, 0.01, 50);
-    elevatorFollowerRight.config_kI(0, 0.0, 50);
-    elevatorFollowerRight.config_kD(0, 0.0, 50);*/
-    elevatorFollowerRight.configVoltageCompSaturation(12);
-    elevatorFollowerRight.enableCurrentLimit(false);
-    //elevatorFollowerRight.selectProfileSlot(0, 0);
-
-    elevatorMasterLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-    elevatorFollowerRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-
-    elevatorMasterLeft.setSensorPhase(true);
-    elevatorFollowerRight.setSensorPhase(true);
-
-    elevatorMasterLeft.setSelectedSensorPosition(0);
-    elevatorFollowerRight.setSelectedSensorPosition(0);
+    //elevator.setPosition(0);
+    
     elevatorController.setTolerance(100);
   }
 
@@ -74,23 +52,21 @@ public class Elevator extends SubsystemBase {
     if (!joystickControl) {
       double pid = elevatorController.calculate(getElevatorEncoder(), setpoint);
       pid = MathUtil.applyDeadband(pid, .4);
-      elevatorFollowerRight.set(ControlMode.PercentOutput, pid);
+      elevator.set(pid);
     }
     
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Right elevator encoder", 
-      elevatorMasterLeft.getSelectedSensorPosition());
+    SmartDashboard.putNumber("elevator encoder", 
+      getElevatorEncoder());
 
-    SmartDashboard.putNumber("Left elevator encoder", 
-      elevatorFollowerRight.getSelectedSensorPosition());
   }
-  public void holdElevatorAtTop() {
-    setElevator(-8900);
+  public void holdElevatorAtTrap() {
+    setElevator(-190);
   }
 
 
   public void holdElevatorAtAmp() {
-    setElevator(-4700);
+    setElevator(-102);
   }
 
   
@@ -103,7 +79,7 @@ public class Elevator extends SubsystemBase {
   public void setElevatorJoystick(double speedElevator) {
     speedElevator = MathUtil.applyDeadband(speedElevator, .1);
     if (Math.abs(speedElevator) > .1) {
-      elevatorFollowerRight.set(ControlMode.PercentOutput, MathUtil.applyDeadband(speedElevator, .1));
+      elevator.set(MathUtil.applyDeadband(speedElevator, .1));
       joystickControl = true;
     } else if (joystickControl) {
       setpoint = getElevatorEncoder();
@@ -112,10 +88,10 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getElevatorEncoder() {
-    return elevatorFollowerRight.getSelectedSensorPosition();
+    return elevator.getPosition().getValueAsDouble();
   }
 
   public void stopElevator() {
-    elevatorFollowerRight.set(ControlMode.PercentOutput, 0);
+    elevator.set(0);
   }
 }

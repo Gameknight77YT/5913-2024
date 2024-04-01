@@ -36,22 +36,22 @@ public class Pivot extends SubsystemBase {
 
   //private final PositionVoltage pivotPositionVoltage = new PositionVoltage(0);
 
-  private PIDController pivotController = new PIDController(0.3, 0.00, 0.0);
+  private PIDController pivotController = new PIDController(0.2, 0.00, 0.0);
 
   private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotMap = new InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble>();
   /** Creates a new Pivot. */
   public Pivot() {
     cfg2.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
-    cfg2.MagnetSensor.MagnetOffset = Units.degreesToRotations(97);
+    cfg2.MagnetSensor.MagnetOffset = Units.degreesToRotations(-114+13);
     cfg2.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     pivotEncoder.getConfigurator().apply(cfg2);
 
     cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    cfg.Slot0.kP = 0.4;   //not here scroll up
-    cfg.Slot0.kI = 0.001;
-    cfg.Slot0.kD = 0.00;
-    cfg.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+    //cfg.Slot0.kP = 0.4;   //not here scroll up
+    //cfg.Slot0.kI = 0.001;
+    //cfg.Slot0.kD = 0.00;
+    //cfg.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     cfg.Feedback.FeedbackRemoteSensorID = pivotEncoder.getDeviceID();
     cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = .2;
@@ -72,7 +72,8 @@ public class Pivot extends SubsystemBase {
     //put(3.86, 78.72);
     //put(3.74, 79.69);
     //put(3.57, 81.1);
-    put(10.0, 83.0);
+    put(10.0, 82.50);
+    put(3.9, 82.50);
     put(3.43, 84.5);
     put(3.31, 86.0);
     put(3.01, 89.);
@@ -83,9 +84,12 @@ public class Pivot extends SubsystemBase {
     pivotController.setTolerance(.5);
   }
 
+  
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
 
     
     if (!joystickControl) {
@@ -133,7 +137,7 @@ public class Pivot extends SubsystemBase {
   }
 
   public void subloaferShot() {
-    setPivot(110);
+    setPivot(105);
   }
 
   public double interpolateAngle(double distance) {
@@ -154,7 +158,7 @@ public class Pivot extends SubsystemBase {
   
   public void setPivotBelowStage() {
     //pivot.setControl(pivotPositionVoltage.withPosition(73));
-    setPivot(86.0);
+    setPivot(83.0);
   }
 
   //public void stopPivot() {
@@ -166,11 +170,11 @@ public class Pivot extends SubsystemBase {
   }
 
   public void ampPivot() {
-      setPivot(105);
+      setPivot(111);
   }
 
   public void trapPivot() {
-      setPivot(110);
+      setPivot(107);
   }
 
 }

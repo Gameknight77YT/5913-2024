@@ -88,18 +88,18 @@ public final class Constants {
     public static final int shooterTopID = 17;
     public static final int shooterBottomID = 18;
     public static final int feederID = 19;
-    public static final int elevatorRightID = 20;
-    public static final int elevatorLeftID = 21;
+    public static final int elevatorID = 20;
     public static final int pivotID = 22;
 
     //other IDs 
     public static final int phID = 23;
     public static final int pdhID = 24;
     public static final int pivotEncoderID = 25;
+    public static final int candleID = 26;
 
     //Solenoid ids
-    public static final int climberPistonBackwardID = 14;
-    public static final int climberPistonForwardID = 15;
+    public static final int climberPistonBackwardID = 15;
+    public static final int climberPistonForwardID = 14;
     public static final int ampPistonForwardID = 1;
     public static final int ampPistonBackwardID = 0;
 

@@ -59,11 +59,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    if (m_robotContainer.shooter.isfeedStopped()) {
+    /*if (m_robotContainer.shooter.isfeedStopped()) {
       pdh.setSwitchableChannel(true);
     } else {
       pdh.setSwitchableChannel(false);
-    } 
+    } */
 
     //SmartDashboard.putNumber("current", pdh.getTotalCurrent());
     

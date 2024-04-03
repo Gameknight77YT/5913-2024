@@ -171,16 +171,17 @@ public class Lights extends SubsystemBase {
     if (!DriverStation.isDSAttached()) {
         changeAnimation(AnimationTypes.SingleFade);
     } else if (DriverStation.isDSAttached() && DriverStation.isDisabled()) {
-        changeAnimation(AnimationTypes.ColorFlow);
+        changeAnimation(AnimationTypes.Rainbow);
     } else if (feeder.isfeedStopped() || shooter.isShooterUpToSpeed()) {
+        setColors();
+        candle.setLEDs(0, 255, 0);
+    } else {
         setColors();
         if (isBlue()) {
             candle.setLEDs(0, 0, 255);
         } else {
             candle.setLEDs(255, 0, 0);
         }
-    } else {
-        changeAnimation(AnimationTypes.Rainbow);
     }
     
     

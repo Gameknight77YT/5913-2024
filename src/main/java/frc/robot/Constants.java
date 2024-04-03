@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycle;
 import frc.robot.generated.TunerConstants;
 
 /**
@@ -96,6 +97,8 @@ public final class Constants {
     public static final int pdhID = 24;
     public static final int pivotEncoderID = 25;
     public static final int candleID = 26;
+    
+    public static final int revEncoderDIOPort = 1;
 
     //Solenoid ids
     public static final int climberPistonBackwardID = 15;

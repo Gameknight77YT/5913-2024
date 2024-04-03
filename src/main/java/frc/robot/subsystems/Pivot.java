@@ -18,6 +18,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -26,10 +27,13 @@ import frc.robot.subsystems.Interpolating.InterpolatingTreeMap;
 
 public class Pivot extends SubsystemBase {
   private TalonFX pivot = new TalonFX(Constants.pivotID);
-  private CANcoder pivotEncoder = new CANcoder(Constants.pivotEncoderID);
+
+  //private CANcoder pivotEncoder = new CANcoder(Constants.pivotEncoderID);
+
+  private DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(Constants.revEncoderDIOPort);
 
   private TalonFXConfiguration cfg = new TalonFXConfiguration();
-  private CANcoderConfiguration cfg2 = new CANcoderConfiguration();
+  //private CANcoderConfiguration cfg2 = new CANcoderConfiguration();
 
   private double pivotSetpoint;
   private boolean joystickControl;
@@ -41,10 +45,10 @@ public class Pivot extends SubsystemBase {
   private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotMap = new InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble>();
   /** Creates a new Pivot. */
   public Pivot() {
-    cfg2.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+    /*cfg2.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
     cfg2.MagnetSensor.MagnetOffset = Units.degreesToRotations(-114+13);
     cfg2.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    pivotEncoder.getConfigurator().apply(cfg2);
+    pivotEncoder.getConfigurator().apply(cfg2);*/
 
     cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -52,14 +56,22 @@ public class Pivot extends SubsystemBase {
     //cfg.Slot0.kI = 0.001;
     //cfg.Slot0.kD = 0.00;
     //cfg.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    /*cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     cfg.Feedback.FeedbackRemoteSensorID = pivotEncoder.getDeviceID();
     cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = .2;
     cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = .2;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;*/
 
-    pivotSetpoint = getPivotAngleDegrees();
+    //pivotEncoder.setPositionOffset(Units.degreesToRotations(270));
+    new Thread(() -> {
+      try {
+          Thread.sleep(2000);
+          pivotSetpoint = getPivotAngleDegrees();
+      } catch (Exception e) {
+      }
+  }).start();
+    
     
     pivot.clearStickyFaults();
     
@@ -72,13 +84,13 @@ public class Pivot extends SubsystemBase {
     //put(3.86, 78.72);
     //put(3.74, 79.69);
     //put(3.57, 81.1);
-    put(10.0, 82.50);
-    put(3.9, 82.50);
-    put(3.43, 84.5);
-    put(3.31, 86.0);
-    put(3.01, 89.);
-    put(2.71, 92.79);
-    put(2.36, 96.76);
+    put(10.0, 85.20);
+    put(3.9, 85.20);
+    put(3.43, 89.7);
+    put(3.31, 90.7);
+    put(3.01, 93.3);
+    put(2.71, 95.5);
+    put(2.36, 100.77);
     put(1.93, 109.5);
 
     pivotController.setTolerance(.5);
@@ -93,7 +105,7 @@ public class Pivot extends SubsystemBase {
 
     
     if (!joystickControl) {
-      double pid = -pivotController.calculate(pivotEncoder.getAbsolutePosition().getValueAsDouble()*360, pivotSetpoint);
+      double pid = -pivotController.calculate(getPivotAngleDegrees(), pivotSetpoint);
       pid = MathUtil.applyDeadband(pid, .05);
       pivot.set(pid);
     }
@@ -102,7 +114,7 @@ public class Pivot extends SubsystemBase {
     SmartDashboard.putNumber("pivot encoder", 
       pivot.getPosition().getValueAsDouble());
 
-    SmartDashboard.putNumber("pivot encoder abs", pivotEncoder.getAbsolutePosition().getValueAsDouble()*360);
+    SmartDashboard.putNumber("pivot encoder abs", getPivotAngleDegrees());
 
     SmartDashboard.putNumber("pivot target", pivotController.getSetpoint());//pivotPositionVoltage.Position);
     SmartDashboard.putNumber("error", pivotController.getPositionError());
@@ -121,7 +133,7 @@ public class Pivot extends SubsystemBase {
   }
 
   public double getPivotAngleDegrees() {
-    return Units.rotationsToDegrees(pivotEncoder.getAbsolutePosition().getValueAsDouble());
+    return Units.rotationsToDegrees(-pivotEncoder.getAbsolutePosition())+270;
   }
 
   public void setPivot(double setpoint) {

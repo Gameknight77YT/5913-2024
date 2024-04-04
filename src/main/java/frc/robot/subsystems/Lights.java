@@ -129,7 +129,7 @@ public class Lights extends SubsystemBase {
                 }
                 break;
             case Rainbow:
-                m_toAnimate = new RainbowAnimation(0.7, 0.6, rightClimberLEDCount, false, underGlowLedCount+1);
+                m_toAnimate = new RainbowAnimation(1, 0.6, underGlowLedCount);
                 break;
             case RgbFade:
                 m_toAnimate = new RgbFadeAnimation(0.7, 0.6, underGlowLedCount);
@@ -178,22 +178,21 @@ public class Lights extends SubsystemBase {
 
   @Override
   public void periodic() {
-    candle.animate(null);
 
     if (!DriverStation.isDSAttached()) {
-        //changeAnimation(AnimationTypes.SingleFade);
-    //} else if (DriverStation.isDSAttached() && DriverStation.isDisabled()) {
-        //changeAnimation(AnimationTypes.Rainbow);
+        changeAnimation(AnimationTypes.SingleFade);
+    } else if (DriverStation.isDSAttached() && DriverStation.isDisabled()) {
+        changeAnimation(AnimationTypes.Rainbow);
     } else if (feeder.isfeedStopped() || shooter.isShooterUpToSpeed()) {
         setColors();
-        candle.setLEDs(0, 255, 0, 0, 0, rightClimberLEDCount+leftClimberLEDCount);
+        candle.setLEDs(0, 255, 0);
     } else {
         setColors();
         if (isBlue()) { 
-            candle.setLEDs(0, 0, 255, 0, 0, rightClimberLEDCount+leftClimberLEDCount);
+            candle.setLEDs(0, 0, 255, 0, 0, underGlowLedCount);
             //setEveryOtherLED(255, 0, 0, underGlowLedCount);
         } else {
-            candle.setLEDs(255, 0, 0, 0, 0, rightClimberLEDCount+leftClimberLEDCount);
+            candle.setLEDs(255, 0, 0, 0, 0, underGlowLedCount);
             //setEveryOtherLED(0, 0, 255, underGlowLedCount);
         }
     }

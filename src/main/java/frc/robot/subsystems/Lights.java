@@ -32,7 +32,11 @@ public class Lights extends SubsystemBase {
 
   private CANdle candle = new CANdle(Constants.candleID);
 
-  private final int totalLedCount = 91;
+  
+  private final int underGlowLedCount = 91;
+  private final int rightClimberLEDCount = 58;
+  private final int leftClimberLEDCount = 59;
+  private final int toldLEDCount = underGlowLedCount + rightClimberLEDCount + leftClimberLEDCount;
 
   private CANdleConfiguration cfg = new CANdleConfiguration();
 
@@ -111,37 +115,37 @@ public class Lights extends SubsystemBase {
         {
             case ColorFlow:
                 if (isBlue()) {
-                    m_toAnimate = new ColorFlowAnimation(0, 0, 255, 0, 0.7, totalLedCount, Direction.Forward);
+                    m_toAnimate = new ColorFlowAnimation(0, 0, 255, 0, 0.7, underGlowLedCount, Direction.Forward);
                 } else {
-                    m_toAnimate = new ColorFlowAnimation(255, 0, 0, 0, 0.7, totalLedCount, Direction.Forward);
+                    m_toAnimate = new ColorFlowAnimation(255, 0, 0, 0, 0.7, underGlowLedCount, Direction.Forward);
                 }
                 break;
             
             case Larson:
                 if (isBlue()) {
-                    m_toAnimate = new LarsonAnimation(0, 0, 255, 0, .4, totalLedCount, BounceMode.Front, 5);
+                    m_toAnimate = new LarsonAnimation(0, 0, 255, 0, .4, underGlowLedCount, BounceMode.Front, 5);
                 } else {
-                    m_toAnimate = new LarsonAnimation(255, 0, 0, 0, .4, totalLedCount, BounceMode.Front, 5);
+                    m_toAnimate = new LarsonAnimation(255, 0, 0, 0, .4, underGlowLedCount, BounceMode.Front, 5);
                 }
                 break;
             case Rainbow:
-                m_toAnimate = new RainbowAnimation(1, 0.6, totalLedCount);
+                m_toAnimate = new RainbowAnimation(0.7, 0.6, rightClimberLEDCount, false, underGlowLedCount+1);
                 break;
             case RgbFade:
-                m_toAnimate = new RgbFadeAnimation(0.7, 0.6, totalLedCount);
+                m_toAnimate = new RgbFadeAnimation(0.7, 0.6, underGlowLedCount);
                 break;
             case SingleFade:
                 if (isBlue()) {
-                    m_toAnimate = new SingleFadeAnimation(0, 0, 200, 0, 0.5, totalLedCount);
+                    m_toAnimate = new SingleFadeAnimation(0, 0, 200, 0, 0.5, underGlowLedCount);
                 } else {
-                    m_toAnimate = new SingleFadeAnimation(200, 0, 0, 0, 0.5, totalLedCount);
+                    m_toAnimate = new SingleFadeAnimation(200, 0, 0, 0, 0.5, underGlowLedCount);
                 }
                 break;
             case Twinkle:
-                m_toAnimate = new TwinkleAnimation(30, 70, 60, 0, 0.4, totalLedCount, TwinklePercent.Percent30);
+                m_toAnimate = new TwinkleAnimation(30, 70, 60, 0, 0.4, underGlowLedCount, TwinklePercent.Percent30);
                 break;
             case TwinkleOff:
-                m_toAnimate = new TwinkleOffAnimation(70, 90, 175, 0, 0.6, totalLedCount, TwinkleOffPercent.Percent100);
+                m_toAnimate = new TwinkleOffAnimation(70, 90, 175, 0, 0.6, underGlowLedCount, TwinkleOffPercent.Percent100);
                 break;
             case SetAll:
                 m_toAnimate = null;
@@ -163,24 +167,34 @@ public class Lights extends SubsystemBase {
     }
   }
 
+  public void setEveryOtherLED(int r, int g, int b, double ledCount) {
+    for(int i = 0; i < ledCount; i+=2) {
+        
+        candle.setLEDs(r, g, b, 0, i, 1);
+    }
+  }
+
     
 
   @Override
   public void periodic() {
+    candle.animate(null);
 
     if (!DriverStation.isDSAttached()) {
-        changeAnimation(AnimationTypes.SingleFade);
-    } else if (DriverStation.isDSAttached() && DriverStation.isDisabled()) {
-        changeAnimation(AnimationTypes.Rainbow);
+        //changeAnimation(AnimationTypes.SingleFade);
+    //} else if (DriverStation.isDSAttached() && DriverStation.isDisabled()) {
+        //changeAnimation(AnimationTypes.Rainbow);
     } else if (feeder.isfeedStopped() || shooter.isShooterUpToSpeed()) {
         setColors();
-        candle.setLEDs(0, 255, 0);
+        candle.setLEDs(0, 255, 0, 0, 0, rightClimberLEDCount+leftClimberLEDCount);
     } else {
         setColors();
-        if (isBlue()) {
-            candle.setLEDs(0, 0, 255);
+        if (isBlue()) { 
+            candle.setLEDs(0, 0, 255, 0, 0, rightClimberLEDCount+leftClimberLEDCount);
+            //setEveryOtherLED(255, 0, 0, underGlowLedCount);
         } else {
-            candle.setLEDs(255, 0, 0);
+            candle.setLEDs(255, 0, 0, 0, 0, rightClimberLEDCount+leftClimberLEDCount);
+            //setEveryOtherLED(0, 0, 255, underGlowLedCount);
         }
     }
     

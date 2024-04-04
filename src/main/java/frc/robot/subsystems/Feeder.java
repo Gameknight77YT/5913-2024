@@ -54,7 +54,7 @@ public class Feeder extends SubsystemBase {
         feeder.set(ControlMode.PercentOutput, 0);
       
 
-      } else if (intakeTimer.get() > 0.01 && intakeTimer.get() < 3) {
+      } else if (intakeTimer.get() > 0.00 && intakeTimer.get() < 3) {
         if(intakeTimer.get() > .2) {
           intakeStopped = true;
         }

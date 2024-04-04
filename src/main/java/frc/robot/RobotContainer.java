@@ -55,9 +55,9 @@ public class RobotContainer {
   private final ClimberPiston climberPiston = new ClimberPiston();
   private final Lights lights = new Lights(shooter, feeder);
   
-  private SlewRateLimiter xLimiter = new SlewRateLimiter(12.0);//9
-  private SlewRateLimiter yLimiter = new SlewRateLimiter(12.0);//9
-  private SlewRateLimiter rotLimiter = new SlewRateLimiter(30.0);//20
+  private SlewRateLimiter xLimiter = new SlewRateLimiter(15.0);//9
+  private SlewRateLimiter yLimiter = new SlewRateLimiter(15.0);//9
+  private SlewRateLimiter rotLimiter = new SlewRateLimiter(35.0);//20
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =

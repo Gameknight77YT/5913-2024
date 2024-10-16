@@ -66,7 +66,7 @@ public class Elevator extends SubsystemBase {
 
 
   public void holdElevatorAtAmp() {
-    setElevator(-102);
+    setElevator(-96);
   }
 
   

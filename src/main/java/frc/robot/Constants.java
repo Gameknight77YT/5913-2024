@@ -111,9 +111,9 @@ public final class Constants {
     public static final double feederSpeed = 1.00; 
     public static final double shooterTopShootSpeed = 75; //FIXME
     public static final double shooterBottomShootSpeed = 75; //FIXME
-    public static final double shooterTopAmpShootSpeed = 10; //FIXME
-    public static final double shooterBottomAmpShootSpeed = 10; //FIXME
-    public static final double deflectionSpeed = .50;
+    public static final double shooterTopAmpShootSpeed = 40; //FIXME
+    public static final double shooterBottomAmpShootSpeed = 40; //FIXME
+    public static final double deflectionSpeed = .80;
 
     
 

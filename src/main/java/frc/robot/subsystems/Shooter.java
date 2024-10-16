@@ -44,7 +44,7 @@ public class Shooter extends SubsystemBase {
     cfg1.Slot0.kV = 0.0;   //FIXME
     cfg1.Slot0.kP = 0.7;
     cfg1.Slot0.kI = 0.0;
-    cfg1.Slot0.kD = 0.01;
+    cfg1.Slot0.kD = 0.005;
     //cfg1.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.2;
 
     cfg2.MotorOutput.NeutralMode = NeutralModeValue.Coast;
@@ -52,7 +52,7 @@ public class Shooter extends SubsystemBase {
     cfg2.Slot0.kV = 0.0;   //FIXME
     cfg2.Slot0.kP = 0.7;
     cfg2.Slot0.kI = 0.0;
-    cfg2.Slot0.kD = 0.01;
+    cfg2.Slot0.kD = 0.005;
     //cfg2.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.2;
 
     
@@ -109,10 +109,14 @@ public class Shooter extends SubsystemBase {
   public void shoot(boolean isAmp) {
     if (isAmp) {
       shooterDeflection.set(Constants.deflectionSpeed);
-      shooterTop.setControl(shooterTopVelocityVoltage.withVelocity(Constants.shooterTopAmpShootSpeed));
-      shooterBottom.setControl(shooterBottomVelocityVoltage.withVelocity(Constants.shooterBottomAmpShootSpeed));
+      shooterTop.set(.3);
+      shooterBottom.set(.3);
+     // shooterTop.setControl(shooterTopVelocityVoltage.withVelocity(Constants.shooterTopAmpShootSpeed));
+     // shooterBottom.setControl(shooterBottomVelocityVoltage.withVelocity(Constants.shooterBottomAmpShootSpeed));
     } else {
-      shooterDeflection.set(0);
+      //shooterDeflection.set(0);
+      //shooterTop.set(.8);
+      shooterBottom.set(.8);
       shooterTop.setControl(shooterTopVelocityVoltage.withVelocity(Constants.shooterTopShootSpeed));
       shooterBottom.setControl(shooterBottomVelocityVoltage.withVelocity(Constants.shooterBottomShootSpeed));
     }

@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.713163647566475,
-        "y": 2.918146233904134
+        "x": 1.9112722961537205,
+        "y": 2.365588982247864
       },
       "isLocked": false,
       "linkedName": "BottomStart"
@@ -67,7 +67,7 @@
   "reversed": false,
   "folder": "Bottom Start Folder",
   "previewStartingState": {
-    "rotation": 134.25594079711132,
+    "rotation": 120.7354877019201,
     "velocity": 0
   },
   "useDefaultConstraints": false

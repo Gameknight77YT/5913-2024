@@ -40,7 +40,7 @@ public class Pivot extends SubsystemBase {
 
   //private final PositionVoltage pivotPositionVoltage = new PositionVoltage(0);
 
-  private PIDController pivotController = new PIDController(0.2, 0.00, 0.0);
+  private PIDController pivotController = new PIDController(0.175, 0.00, 0.0);
 
   private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotMap = new InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble>();
   /** Creates a new Pivot. */
@@ -66,7 +66,7 @@ public class Pivot extends SubsystemBase {
     //pivotEncoder.setPositionOffset(Units.degreesToRotations(270));
     new Thread(() -> {
       try {
-          Thread.sleep(2000);
+          Thread.sleep(3000);
           pivotSetpoint = getPivotAngleDegrees();
       } catch (Exception e) {
       }
@@ -84,16 +84,20 @@ public class Pivot extends SubsystemBase {
     //put(3.86, 78.72);
     //put(3.74, 79.69);
     //put(3.57, 81.1);
-    put(10.0, 85.20);
-    put(3.9, 85.20);
-    put(3.43, 89.7);
-    put(3.31, 90.7);
-    put(3.01, 93.3);
-    put(2.71, 95.5);
+    put(10.0, 81.0);
+    put(3.9, 81.0);
+    put(3.7,83.0);
+    put(3.43, 85.7);
+    put(3.31, 87.3);
+    put(3.17, 88.8);
+    put(3.01, 91.2);
+    put(2.71, 95.6);
     put(2.36, 100.77);
     put(1.93, 109.5);
 
     pivotController.setTolerance(.5);
+
+
   }
 
   
@@ -133,7 +137,7 @@ public class Pivot extends SubsystemBase {
   }
 
   public double getPivotAngleDegrees() {
-    return Units.rotationsToDegrees(-pivotEncoder.getAbsolutePosition())+270;
+    return Units.rotationsToDegrees(-pivotEncoder.getAbsolutePosition())+275+105;
   }
 
   public void setPivot(double setpoint) {
@@ -182,7 +186,7 @@ public class Pivot extends SubsystemBase {
   }
 
   public void ampPivot() {
-      setPivot(111);
+      setPivot(105);
   }
 
   public void trapPivot() {

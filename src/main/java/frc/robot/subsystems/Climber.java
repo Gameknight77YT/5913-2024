@@ -61,6 +61,7 @@ public class Climber extends SubsystemBase {
 
   public void setClimberSetpoint(double setpoint) {
     climber.setControl(climberPositionVoltage.withPosition(setpoint));
+    System.out.println("me");
   }
 
   public void setClimberSpeed(double speedPercent) {

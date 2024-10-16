@@ -55,8 +55,8 @@ public class RobotContainer {
   private final ClimberPiston climberPiston = new ClimberPiston();
   private final Lights lights = new Lights(shooter, feeder);
   
-  private SlewRateLimiter xLimiter = new SlewRateLimiter(15.0);//9
-  private SlewRateLimiter yLimiter = new SlewRateLimiter(15.0);//9
+  private SlewRateLimiter xLimiter = new SlewRateLimiter(18.0);//9
+  private SlewRateLimiter yLimiter = new SlewRateLimiter(18.0);//9
   private SlewRateLimiter rotLimiter = new SlewRateLimiter(35.0);//20
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -120,6 +120,24 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Pivot88", pivot.run(
           () -> pivot.setPivot(85.6))
+          //.alongWith(drivetrain.applyRequest(
+          //  () -> driveTracking.withRotationalRate(camera.moveInput())
+          //))
+        );
+    NamedCommands.registerCommand("AutoShot", pivot.run(
+          () -> pivot.setPivot(86.4))
+          //.alongWith(drivetrain.applyRequest(
+          //  () -> driveTracking.withRotationalRate(camera.moveInput())
+          //))
+        );
+    NamedCommands.registerCommand("AutoFirstShot", pivot.run(
+          () -> pivot.setPivot(108.0))
+          //.alongWith(drivetrain.applyRequest(
+          //  () -> driveTracking.withRotationalRate(camera.moveInput())
+          //))
+        );  
+      NamedCommands.registerCommand("Pivot110", pivot.run(
+          () -> pivot.setPivot(115.0))
           //.alongWith(drivetrain.applyRequest(
           //  () -> driveTracking.withRotationalRate(camera.moveInput())
           //))
@@ -342,14 +360,14 @@ public class RobotContainer {
         )
     );
 
-    manipulatorController.povUp().onTrue(
+    manipulatorController.y().onTrue(
       elevator.runOnce(() -> elevator.holdElevatorAtTrap())
       .alongWith(pivot.runOnce(() -> pivot.trapPivot()))
       .alongWith(ampPiston.runOnce(() -> ampPiston.set(true))
         )
       );
 
-    manipulatorController.povLeft().onTrue(
+    manipulatorController.x().onTrue(
       elevator.runOnce(() -> elevator.holdElevatorAtAmp())
       .alongWith(pivot.runOnce(() -> pivot.ampPivot()))
       .alongWith(ampPiston.runOnce(() -> ampPiston.set(true))

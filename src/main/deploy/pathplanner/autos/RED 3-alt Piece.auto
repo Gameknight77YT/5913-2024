@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.88,
-      "y": 4.35
+      "x": 0.73,
+      "y": 4.36
     },
-    "rotation": 134.90557482392606
+    "rotation": 120.72
   },
   "command": {
     "type": "sequential",
@@ -24,13 +24,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "SubloaferShot"
+                  "name": "AutoFirstShot"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.0
+                  "waitTime": 1.4
                 }
               }
             ]
@@ -49,7 +49,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "SubloaferShot"
+                  "name": "AutoFirstShot"
                 }
               },
               {
@@ -68,7 +68,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Bottom Skipto3 Piece Path"
+                  "pathName": "Copy of Bottom Skipto3 Piece Path"
                 }
               },
               {
@@ -106,7 +106,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Bottom 3toScore Piece Path"
+                  "pathName": "Copy of Bottom 3toScore Piece Path"
                 }
               },
               {
@@ -220,7 +220,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Bottom 4toScore Piece Path"
+                  "pathName": "Copy of Bottom 4toScore Piece Path"
                 }
               },
               {

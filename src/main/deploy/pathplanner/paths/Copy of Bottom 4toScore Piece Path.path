@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.300282951493148,
-        "y": 1.8034688280503517
+        "x": 4.0777770571233,
+        "y": 1.592673770226285
       },
       "isLocked": false,
       "linkedName": "Bottom4Piece"
@@ -20,8 +20,8 @@
         "y": 3.232190886635696
       },
       "prevControl": {
-        "x": 4.675029720958161,
-        "y": 1.8854446838708223
+        "x": 3.960668691665485,
+        "y": 1.7214929722298802
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,7 +39,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 147.84770485871763,
+    "rotation": 128.453709216706,
     "rotateFast": false
   },
   "reversed": false,

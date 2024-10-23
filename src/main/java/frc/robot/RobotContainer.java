@@ -272,7 +272,10 @@ public class RobotContainer {
       
 
     
-
+    driverController.a().whileTrue(intake.runEnd(
+      () -> intake.reverseIntake(true),
+      () -> intake.reverseIntake(false))
+      );
     
     driverController.b().whileTrue(pivot.runOnce(() -> pivot.subloaferShot()));
     
@@ -286,7 +289,7 @@ public class RobotContainer {
       () -> climber.stopClimber())
       );
 
-    driverController.a().onTrue(climberPiston.runOnce(() -> climberPiston.toggle()));
+   // driverController.a().onTrue(climberPiston.runOnce(() -> climberPiston.toggle()));
 
     driverController.leftBumper()
     .and(driverController.rightBumper().negate())
@@ -296,7 +299,7 @@ public class RobotContainer {
       pivot.runOnce(() -> pivot.setPivotBelowStage())
       .alongWith(elevator.runOnce(() -> elevator.setElevator(0)))
       .alongWith(ampPiston.runOnce(() -> ampPiston.set(false)))
-      );
+      ); 
 
     //driverController.povLeft().onTrue(lights.runOnce(() -> lights.decrementAnimation()).ignoringDisable(true));
 
@@ -373,6 +376,8 @@ public class RobotContainer {
       .alongWith(ampPiston.runOnce(() -> ampPiston.set(true))
         )
     );
+
+    manipulatorController.a().onTrue(climberPiston.runOnce(() -> climberPiston.toggle()));
 
     manipulatorController.povDown().onTrue(
       elevator.runOnce(() -> elevator.setElevator(0))

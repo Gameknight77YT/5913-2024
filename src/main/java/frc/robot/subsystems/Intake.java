@@ -116,5 +116,7 @@ public class Intake extends SubsystemBase {
     //backIntakeArms.set(Value.kForward);
   }
 
-  
+  public void intakeReverse() {
+    
+  }
 }

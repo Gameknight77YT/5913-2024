@@ -306,6 +306,11 @@ public class RobotContainer {
     //driverController.povRight().onTrue(lights.runOnce(() -> lights.incrementAnimation()).ignoringDisable(true));
 
 
+    manipulatorController.povDown().whileTrue(intake.runEnd(
+      () -> intake.intakeFront(), () -> intake.intakeStop())
+      .alongWith(feeder.runEnd(() -> feeder.feed(true), () -> feeder.stopFeed()))
+      );
+
     manipulatorController.rightBumper()
       .and(manipulatorController.rightTrigger().negate())
         .whileTrue(feeder.runEnd(

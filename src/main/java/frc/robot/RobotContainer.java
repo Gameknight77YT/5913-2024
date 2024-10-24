@@ -273,8 +273,8 @@ public class RobotContainer {
 
     
     driverController.a().whileTrue(intake.runEnd(
-      () -> intake.reverseIntake(true),
-      () -> intake.reverseIntake(false))
+      () -> intake.intakeFront(), () -> intake.intakeStop())
+      .alongWith(feeder.runEnd(() -> feeder.feed(true), () -> feeder.stopFeed()))
       );
     
     driverController.b().whileTrue(pivot.runOnce(() -> pivot.subloaferShot()));

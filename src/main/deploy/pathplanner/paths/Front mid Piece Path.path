@@ -8,36 +8,36 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2996593286272597,
-        "y": 5.640327524929861
+        "x": 2.3109230794713658,
+        "y": 5.583662582461757
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.148781087939481,
-        "y": 5.78237391589287
+        "x": 3.1409074161062587,
+        "y": 5.574822688106915
       },
       "prevControl": {
-        "x": 2.318598847422328,
-        "y": 5.671893389588307
+        "x": 2.3211515752560734,
+        "y": 5.574358195791997
       },
       "nextControl": {
-        "x": 3.2479071666820998,
-        "y": 5.795565599375728
+        "x": 3.240907400053194,
+        "y": 5.574879350373556
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.6088828051231172,
-        "y": 5.5109074798302276
+        "x": 1.43,
+        "y": 5.410406484151056
       },
       "prevControl": {
-        "x": 2.451175478987805,
-        "y": 5.570882622681278
+        "x": 2.3445732483476367,
+        "y": 5.386520318744576
       },
       "nextControl": null,
       "isLocked": false,
@@ -55,13 +55,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -171.15380909516645,
+    "rotation": -170.05027243197637,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "Front Notes",
   "previewStartingState": {
-    "rotation": -171.45944064150225,
+    "rotation": 179.98650764132447,
     "velocity": 0
   },
   "useDefaultConstraints": false
